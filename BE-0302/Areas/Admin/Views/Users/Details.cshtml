@@ -1,0 +1,7 @@
+﻿@model BE_0302.Models.User
+@{ ViewBag.Title = "Chi tiết tài khoản admin"; }
+<h2 class="page-title bg-success">Chi tiết tài khoản admin</h2>
+@Html.ValidationSummary(false, "", new { @class = "text-danger" })
+<dl class="dl-horizontal"><dt>Tên đăng nhập</dt><dd>@Model.Username</dd><dt>Vai trò</dt><dd>Quản trị viên</dd></dl>
+@Html.ActionLink("Cập nhật", "Edit", new { id = Model.Username }, new { @class = "btn btn-primary" })
+<div class="form-actions">@Html.ActionLink("Quay lại danh sách", "Index", null, new { @class = "btn btn-default" })</div>

@@ -1,0 +1,49 @@
+﻿@model BE_0302.Models.ViewModel.DashboardVM
+@{ ViewBag.Title = "Trang quản trị"; }
+<h2 class="page-title bg-success">TRANG QUẢN TRỊ</h2>
+<div class="row">
+    <div class="col-sm-3"><a class="stat-card" href="@Url.Action("Index", "Categories")">Danh mục<strong>@Model.CategoryCount</strong></a></div>
+    <div class="col-sm-3"><a class="stat-card" href="@Url.Action("Index", "Products")">Sản phẩm<strong>@Model.ProductCount</strong></a></div>
+    <div class="col-sm-3"><a class="stat-card" href="@Url.Action("Index", "Customers")">Khách hàng<strong>@Model.CustomerCount</strong></a></div>
+    <div class="col-sm-3"><a class="stat-card" href="@Url.Action("Index", "Orders")">Đơn hàng<strong>@Model.OrderCount</strong></a></div>
+</div>
+<p>Tổng giá trị đơn hàng: <strong>@Model.OrderTotal.ToString("N0") đ</strong></p>
+<h3 class="page-title bg-success">BIỂU ĐỒ THỐNG KÊ</h3>
+<div id="category-chart" class="chart" aria-label="Số sản phẩm theo danh mục"></div>
+<div class="table-responsive"><table id="category-statistics" class="table table-bordered">
+    <thead><tr><th>Danh mục</th><th>Số sản phẩm</th></tr></thead><tbody>
+    @foreach (var category in Model.Categories)
+    {
+        <tr data-name="@category.Name" data-count="@category.Count"><td>@category.Name</td><td>@category.Count</td></tr>
+    }
+    @if (Model.Categories.Count == 0) { <tr><td colspan="2">Chưa có dữ liệu thống kê.</td></tr> }
+    </tbody>
+</table></div>
+@section scripts {
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        (function () {
+            var container = document.getElementById('category-chart');
+            var rows = document.querySelectorAll('#category-statistics tbody tr[data-count]');
+            var values = [['Danh mục', 'Số sản phẩm']];
+            var total = 0;
+            for (var i = 0; i < rows.length; i++) {
+                var count = Number(rows[i].getAttribute('data-count'));
+                total += count;
+                values.push([rows[i].getAttribute('data-name'), count]);
+            }
+            if (!window.google || !google.charts || total === 0) {
+                container.innerHTML = '<p class="text-muted">Xem số lượng sản phẩm trong bảng thống kê bên dưới.</p>';
+                container.style.minHeight = '0';
+                return;
+            }
+            google.charts.load('current', { packages: ['corechart'], language: 'vi' });
+            google.charts.setOnLoadCallback(function () {
+                var chart = new google.visualization.PieChart(container);
+                var data = google.visualization.arrayToDataTable(values);
+                function draw() { chart.draw(data, { title: 'Tỷ lệ sản phẩm theo danh mục', height: 350, is3D: true }); }
+                draw(); window.addEventListener('resize', draw);
+            });
+        }());
+    </script>
+}

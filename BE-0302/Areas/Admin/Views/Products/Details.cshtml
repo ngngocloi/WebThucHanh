@@ -1,0 +1,7 @@
+﻿@model BE_0302.Models.Product
+@{ ViewBag.Title = "Chi tiết sản phẩm"; }
+<h2 class="page-title bg-success">Chi tiết sản phẩm</h2>
+@Html.ValidationSummary(false, "", new { @class = "text-danger" })
+@Html.Partial("PVProductInfo", Model)
+@Html.ActionLink("Cập nhật", "Edit", new { id = Model.ProductID }, new { @class = "btn btn-primary" })
+<div class="form-actions">@Html.ActionLink("Quay lại danh sách", "Index", null, new { @class = "btn btn-default" })</div>

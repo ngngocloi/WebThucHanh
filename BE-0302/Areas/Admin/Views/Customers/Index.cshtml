@@ -1,0 +1,31 @@
+﻿@model BE_0302.Models.ViewModel.CustomerSearchVM
+@using PagedList.Mvc
+@{ ViewBag.Title = "Quản lý khách hàng"; }
+<h2 class="page-title bg-success">QUẢN LÝ KHÁCH HÀNG</h2>
+@using (Html.BeginForm("Index", "Customers", FormMethod.Get, new { @class = "search-form" }))
+{
+    <div class="row"><div class="col-md-7 form-group"><label for="Keyword">Từ khóa</label>
+        @Html.TextBoxFor(m => m.Keyword, new { @class = "form-control", placeholder = "Tên, tài khoản, email hoặc số điện thoại" })</div>
+    <div class="col-md-5 form-group"><label for="SortOrder">Sắp xếp</label>
+        @Html.DropDownListFor(m => m.SortOrder, new SelectList(new[] {
+            new { Value = "id_asc", Text = "Mã khách hàng tăng dần" }, new { Value = "id_desc", Text = "Mã khách hàng giảm dần" },
+            new { Value = "name_asc", Text = "Tên tăng dần" }, new { Value = "name_desc", Text = "Tên giảm dần" }
+        }, "Value", "Text"), new { @class = "form-control" })</div></div>
+    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+    @Html.ActionLink("Đặt lại", "Index", null, new { @class = "btn btn-default" })
+}
+<p>Tổng số: @Model.Customers.TotalItemCount khách hàng.</p>
+<div class="table-responsive"><table class="table admin-table">
+    <thead><tr><th>Mã KH</th><th>Họ và tên</th><th>Tài khoản</th><th>Email</th><th>Điện thoại</th><th>Thao tác</th></tr></thead><tbody>
+    @foreach (var item in Model.Customers)
+    {
+        <tr><td>@item.CustomerID</td><td>@item.CustomerName</td><td>@item.Username</td><td>@item.CustomerEmail</td><td>@item.CustomerPhone</td>
+        <td class="actions">
+            @Html.ActionLink("Chi tiết", "Details", new { id = item.CustomerID }, new { @class = "btn btn-info btn-sm" })
+            @Html.ActionLink("Đơn hàng", "Index", "Orders", new { customerID = item.CustomerID }, new { @class = "btn btn-primary btn-sm" })
+        </td></tr>
+    }
+    @if (Model.Customers.Count == 0) { <tr><td colspan="6">Không có khách hàng phù hợp.</td></tr> }
+    </tbody>
+</table></div>
+@Html.PagedListPager(Model.Customers, page => Url.Action("Index", new { page, Model.Keyword, Model.SortOrder }))

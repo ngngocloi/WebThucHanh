@@ -1,0 +1,25 @@
+﻿@model BE_0302.Models.ViewModel.ProductDetailsVM
+
+@if (Model.RelatedProducts != null && Model.RelatedProducts.Any())
+{
+    <div class="related-prod-grid">
+        @foreach (var item in Model.RelatedProducts)
+        {
+            <div class="mini-prod-card">
+                <a href="@Url.Action("ProductDetails", "Home", new { id = item.ProductID })" class="mini-prod-thumb">
+                    <img src="@Url.Content(item.ImageUrl)" alt="@item.ProductName" onerror="this.onerror=null;this.src='@Url.Content(item.FallbackImageUrl)';" />
+                </a>
+                <div class="mini-prod-body">
+                    <a href="@Url.Action("ProductDetails", "Home", new { id = item.ProductID })" class="mini-prod-name" title="@item.ProductName">
+                        @item.ProductName
+                    </a>
+                    <div class="mini-prod-price">@item.ProductPrice.ToString("N0") đ</div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p class="text-muted text-center" style="font-size:12.5px;padding:10px;">Chưa có thêm sản phẩm cùng loại.</p>
+}

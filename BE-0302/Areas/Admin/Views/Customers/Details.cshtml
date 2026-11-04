@@ -1,0 +1,14 @@
+﻿@model BE_0302.Models.Customer
+@{ ViewBag.Title = "Chi tiết khách hàng"; }
+<h2 class="page-title bg-success">Chi tiết khách hàng</h2>
+<dl class="dl-horizontal">
+    <dt>Mã khách hàng</dt><dd>@Model.CustomerID</dd>
+    <dt>Họ và tên</dt><dd>@Model.CustomerName</dd>
+    <dt>Tài khoản</dt><dd>@Model.Username</dd>
+    <dt>Điện thoại</dt><dd>@Model.CustomerPhone</dd>
+    <dt>Email</dt><dd>@Model.CustomerEmail</dd>
+    <dt>Địa chỉ</dt><dd>@Model.CustomerAddress</dd>
+    <dt>Số đơn hàng</dt><dd>@ViewBag.OrderCount</dd>
+</dl>
+@Html.ActionLink("Xem đơn hàng", "Index", "Orders", new { customerID = Model.CustomerID }, new { @class = "btn btn-primary" })
+@Html.ActionLink("Quay lại danh sách", "Index", null, new { @class = "btn btn-default" })

@@ -1,0 +1,7 @@
+﻿@model BE_0302.Models.Category
+@{ ViewBag.Title = "Chi tiết danh mục"; }
+<h2 class="page-title bg-success">Chi tiết danh mục</h2>
+@Html.ValidationSummary(false, "", new { @class = "text-danger" })
+<dl class="dl-horizontal"><dt>Mã danh mục</dt><dd>@Model.CategoryID</dd><dt>Tên danh mục</dt><dd>@Model.CategoryName</dd></dl>
+@Html.ActionLink("Cập nhật", "Edit", new { id = Model.CategoryID }, new { @class = "btn btn-primary" })
+<div class="form-actions">@Html.ActionLink("Quay lại danh sách", "Index", null, new { @class = "btn btn-default" })</div>

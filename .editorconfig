@@ -1,0 +1,9 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = crlf
+insert_final_newline = true
+
+[*.{cs,cshtml,vb,vbhtml,sql,css,config,sln,csproj,tt,edmx}]
+charset = utf-8-bom

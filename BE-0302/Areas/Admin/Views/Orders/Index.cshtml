@@ -1,0 +1,32 @@
+﻿@model BE_0302.Models.ViewModel.OrderSearchVM
+@using PagedList.Mvc
+@{ ViewBag.Title = "Quản lý đơn hàng"; }
+<h2 class="page-title bg-success">QUẢN LÝ ĐƠN HÀNG</h2>
+@if (Model.CustomerID.HasValue) { <h4>Khách hàng: @Model.CustomerName (#@Model.CustomerID)</h4> }
+@using (Html.BeginForm("Index", "Orders", FormMethod.Get, new { @class = "search-form form-inline" }))
+{
+    if (Model.CustomerID.HasValue) { @Html.HiddenFor(m => m.CustomerID) }
+    <label for="Keyword">Từ khóa</label>
+    @Html.TextBoxFor(m => m.Keyword, new { @class = "form-control", placeholder = "Khách hàng, tài khoản, trạng thái" })
+    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+    @Html.ActionLink("Đặt lại", "Index", new { Model.CustomerID }, new { @class = "btn btn-default" })
+}
+<p>Tổng số: @Model.Orders.TotalItemCount đơn hàng.</p>
+<div class="table-responsive"><table class="table admin-table">
+    <thead><tr><th>Mã đơn</th><th>Khách hàng</th><th>Ngày đặt</th><th>Tổng tiền</th><th>Thanh toán</th><th>Thao tác</th></tr></thead><tbody>
+    @foreach (var item in Model.Orders)
+    {
+        <tr><td>@item.OrderID</td><td>@item.Customer.CustomerName</td><td>@item.OrderDate.ToString("dd/MM/yyyy")</td>
+        <td>@item.TotalAmount.ToString("N0") đ</td><td>@item.PaymentStatus</td><td>
+            @Html.ActionLink("Chi tiết", "Details", new { id = item.OrderID }, new { @class = "btn btn-info btn-sm" })
+        </td></tr>
+    }
+    @if (Model.Orders.Count == 0) { <tr><td colspan="6">Chưa có đơn hàng phù hợp.</td></tr> }
+    </tbody>
+</table></div>
+@Html.PagedListPager(Model.Orders, page => Url.Action("Index", new { page, Model.CustomerID, Model.Keyword }))
+@if (Model.CustomerID.HasValue)
+{
+    @Html.ActionLink("Thông tin khách hàng", "Details", "Customers", new { id = Model.CustomerID }, new { @class = "btn btn-default" })
+    @Html.ActionLink("Tất cả đơn hàng", "Index", new { customerID = (int?)null }, new { @class = "btn btn-default" })
+}

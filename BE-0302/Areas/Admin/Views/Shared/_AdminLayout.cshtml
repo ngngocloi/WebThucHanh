@@ -1,0 +1,58 @@
+﻿@{
+    var currentController = (ViewContext.RouteData.Values["controller"] ?? "").ToString();
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewBag.Title - My Store Admin</title>
+    @Styles.Render("~/Content/css")
+    <link href="@Url.Content("~/Content/Admin.css")" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&subset=vietnamese&display=swap" rel="stylesheet" />
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top" aria-label="Quản trị">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#admin-menu" aria-label="Mở menu" aria-expanded="false">
+                    <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("My Store Admin", "Index", "AdminHome", new { area = "Admin" }, new { @class = "navbar-brand" })
+            </div>
+            <div id="admin-menu" class="navbar-collapse collapse">
+                @if (Session["AdminUsername"] != null)
+                {
+                    <ul class="nav navbar-nav">
+                        <li class="@(currentController == "AdminHome" ? "active" : "")"><a href="@Url.Action("Index", "AdminHome", new { area = "Admin" })"><i class="fas fa-tachometer-alt"></i> Trang chủ</a></li>
+                        <li class="@(currentController == "Categories" ? "active" : "")"><a href="@Url.Action("Index", "Categories", new { area = "Admin" })"><i class="fas fa-th-list"></i> Danh mục</a></li>
+                        <li class="@(currentController == "Products" ? "active" : "")"><a href="@Url.Action("Index", "Products", new { area = "Admin" })"><i class="fas fa-box-open"></i> Sản phẩm</a></li>
+                        <li class="@(currentController == "Customers" ? "active" : "")"><a href="@Url.Action("Index", "Customers", new { area = "Admin" })"><i class="fas fa-users"></i> Khách hàng</a></li>
+                        <li class="@(currentController == "Orders" ? "active" : "")"><a href="@Url.Action("Index", "Orders", new { area = "Admin" })"><i class="fas fa-receipt"></i> Đơn hàng</a></li>
+                        <li class="@(currentController == "Users" ? "active" : "")"><a href="@Url.Action("Index", "Users", new { area = "Admin" })"><i class="fas fa-user-shield"></i> Tài khoản</a></li>
+                    </ul>
+                    using (Html.BeginForm("Logout", "Account", new { area = "Admin" }, FormMethod.Post, new { @class = "navbar-form navbar-right" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-default btn-sm"><i class="fas fa-sign-out-alt"></i> Đăng xuất</button>
+                    }
+                }
+            </div>
+        </div>
+    </nav>
+    <main class="container body-content">
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success" role="status">@TempData["Success"]</div>
+        }
+        @RenderBody()
+        <hr />
+        <footer><p>&copy; @DateTime.Now.Year - My Store</p><p>Trang quản trị BE-0302</p></footer>
+    </main>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

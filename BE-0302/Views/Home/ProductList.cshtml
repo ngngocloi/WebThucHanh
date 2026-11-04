@@ -1,0 +1,60 @@
+﻿@model BE_0302.Models.ViewModel.HomeProductVM
+@using PagedList.Mvc
+@{
+    ViewBag.Title = ViewBag.CategoryName ?? "Danh sách sản phẩm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" type="text/css" href="~/Content/myStyle/CustomerHome.css" />
+
+<section class="container-fluid searchProd" style="margin-top:20px;">
+    <h2>@(ViewBag.CategoryName ?? "Danh sách sản phẩm")</h2>
+    @using (Html.BeginForm("ProductList", "Home", FormMethod.Get))
+    {
+        if (ViewBag.CategoryID != null)
+        {
+            <input type="hidden" name="id" value="@ViewBag.CategoryID" />
+        }
+        <div class="form-group search-container">
+            @Html.TextBoxFor(m => m.SearchTerm, new
+            {
+                @class = "search-input",
+                placeholder = "Nhập tên, mô tả sản phẩm..."
+            })
+            <button type="submit" class="search-button">Tìm kiếm</button>
+        </div>
+    }
+</section>
+<hr />
+
+@if (Model.NewProducts != null && Model.NewProducts.Any())
+{
+    <section class="container-fluid listProduct">
+        <ul class="list-container">
+            @foreach (var product in Model.NewProducts)
+            {
+                <li class="lproduct-item">
+                    <div>
+                        <a href="@Url.Action("ProductDetails", "Home", new { id = product.ProductID })">
+                            <img src="@Html.DisplayFor(modelItem => product.ProductImage)" alt="@product.ProductName" />
+                        </a>
+                    </div>
+                    <div>
+                        <p class="prodPrice">@Html.DisplayFor(modelItem => product.ProductPrice)</p>
+                        <p class="prodName">@Html.DisplayFor(modelItem => product.ProductName)</p>
+                        <p class="prodSale">
+                            Đã bán:&nbsp;@Html.DisplayFor(modelItem => product.OrderDetails.Count)
+                        </p>
+                    </div>
+                </li>
+            }
+        </ul>
+    </section>
+
+    <div class="pagination-container">
+        @Html.PagedListPager(Model.NewProducts, page => Url.Action("ProductList", new { id = ViewBag.CategoryID, page, searchTerm = Model.SearchTerm }))
+    </div>
+}
+else
+{
+    <p>Không tìm được sản phẩm nào phù hợp trong danh mục này.</p>
+}

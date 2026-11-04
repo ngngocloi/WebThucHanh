@@ -1,0 +1,12 @@
+﻿@{
+    ViewBag.Title = "Thanh to�n th?t b?i";
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+}
+
+<div class="container" style="margin-top:30px;">
+    <div class="alert alert-danger">
+        <h3>Thanh to�n qua PayPal kh�ng th�nh c�ng</h3>
+        <p>�� c� l?i x?y ra trong qu� tr�nh x? l� thanh to�n. Vui l�ng th? l?i ho?c ch?n phuong th?c thanh to�n kh�c.</p>
+        <p>@Html.ActionLink("Quay l?i trang Thanh to�n", "Checkout", "Order", null, new { @class = "btn btn-warning" })</p>
+    </div>
+</div>

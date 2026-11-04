@@ -1,0 +1,46 @@
+﻿@model BE_0302.Models.ViewModel.PersonalMenuVM
+
+<ul class="nav navbar-nav navbar-right">
+    <li>
+        <div style="position:relative;">
+            <i class="fas fa-home"></i>
+            @Html.ActionLink("Trang chủ", "Index", "Home")
+        </div>
+    </li>
+    <li class="dropdown">
+        <div style="position:relative;">
+            <i class="fas fa-user"></i>
+            <a href="javascript:void(0)" id="account-name">
+                @if (Model != null && Model.IsLoggedIn)
+                {
+                    <text>Hello, </text>@Model.Username
+                }
+                else
+                {
+                    <text>Tài khoản</text>
+                }
+            </a>
+            <div class="dropdown-content">
+                @if (Model != null && Model.IsLoggedIn)
+                {
+                    <a href="@Url.Action("ProfileInfo", "Account")">Thông tin tài khoản</a>
+                    <a href="@Url.Action("OrderHistory", "Order")">Lịch sử mua hàng</a>
+                    <a href="@Url.Action("Logout", "Account")">Đăng xuất</a>
+                }
+                else
+                {
+                    <a href="@Url.Action("Register", "Account")">Đăng ký</a>
+                    <a href="@Url.Action("Login", "Account")">Đăng nhập</a>
+                }
+            </div>
+        </div>
+    </li>
+    <li>
+        <div>
+            <a href="@Url.Action("Index2", "Cart")">
+                <i class="fas fa-shopping-cart"></i>
+                (<span id="cart-count">@(Model != null ? Model.CartCount : 0)</span>)
+            </a>
+        </div>
+    </li>
+</ul>

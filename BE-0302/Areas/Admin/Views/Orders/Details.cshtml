@@ -1,0 +1,22 @@
+﻿@model BE_0302.Models.Order
+@{ ViewBag.Title = "Chi tiết đơn hàng"; }
+<h2 class="page-title bg-success">Chi tiết đơn hàng #@Model.OrderID</h2>
+<dl class="dl-horizontal">
+    <dt>Khách hàng</dt><dd>@Html.ActionLink(Model.Customer.CustomerName, "Details", "Customers", new { id = Model.CustomerID }, null)</dd>
+    <dt>Ngày đặt</dt><dd>@Model.OrderDate.ToString("dd/MM/yyyy")</dd>
+    <dt>Địa chỉ nhận</dt><dd>@Model.AddressDelivery</dd>
+    <dt>Thanh toán</dt><dd>@Model.PaymentStatus</dd>
+    <dt>Tổng đơn hàng</dt><dd>@Model.TotalAmount.ToString("N0") đ</dd>
+</dl>
+<div class="table-responsive"><table class="table admin-table">
+    <thead><tr><th>Mã SP</th><th>Sản phẩm</th><th>Số lượng</th><th>Đơn giá lúc mua</th><th>Thành tiền</th></tr></thead><tbody>
+    @foreach (var item in Model.OrderDetails)
+    {
+        <tr><td>@item.ProductID</td><td>@(item.Product == null ? "Sản phẩm không còn tồn tại" : item.Product.ProductName)</td>
+        <td>@item.Quantity</td><td>@item.UnitPrice.ToString("N0") đ</td><td>@((item.Quantity * item.UnitPrice).ToString("N0")) đ</td></tr>
+    }
+    @if (Model.OrderDetails.Count == 0) { <tr><td colspan="5">Đơn hàng chưa có sản phẩm.</td></tr> }
+    </tbody>
+</table></div>
+@Html.ActionLink("Đơn hàng của khách hàng", "Index", new { customerID = Model.CustomerID }, new { @class = "btn btn-primary" })
+@Html.ActionLink("Tất cả đơn hàng", "Index", null, new { @class = "btn btn-default" })

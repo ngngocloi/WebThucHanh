@@ -1,0 +1,177 @@
+﻿@model BE_0302.Models.ViewModel.ProductDetailsVM
+
+@{
+    ViewBag.Title = Model.product != null ? Model.product.ProductName : "Chi tiết sản phẩm";
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+}
+
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/myStyle/CustomerDetailsProduct.css")" />
+
+<div class="container-fluid pro-detail-wrapper">
+    <!-- Breadcrumb điều hướng -->
+    <ol class="breadcrumb detail-breadcrumb">
+        <li><a href="@Url.Action("Index", "Home")"><i class="fas fa-home"></i> Trang chủ</a></li>
+        @if (Model.product != null && Model.product.Category != null)
+        {
+            <li><a href="@Url.Action("Index", "Home", new { categoryId = Model.product.CategoryID })">@Model.product.Category.CategoryName</a></li>
+        }
+        <li class="active">@(Model.product != null ? Model.product.ProductName : "Chi tiết")</li>
+    </ol>
+
+    <div class="row">
+        <!-- CỘT 1: KHỐI THÔNG TIN (Ảnh lớn kèm mô tả) -->
+        <div class="col-md-5 col-sm-12">
+            <div class="detail-card info-card">
+                <div class="detail-main-img-wrap">
+                    <span class="detail-real-badge"><i class="fas fa-camera"></i> Ảnh sản phẩm thực tế 100%</span>
+                    <img src="@Url.Content(Model.product.ImageUrl)"
+                         alt="@Model.product.ProductName"
+                         class="detail-main-img"
+                         onerror="this.onerror=null;this.src='@Url.Content(Model.product.FallbackImageUrl)';" />
+                </div>
+
+                <div class="detail-info-body">
+                    <span class="detail-category-tag">
+                        <i class="fas fa-folder-open"></i> @(Model.product.Category != null ? Model.product.Category.CategoryName : "Sản phẩm")
+                    </span>
+                    <h1 class="detail-prod-title">@Model.product.ProductName</h1>
+
+                    <div class="detail-meta-row">
+                        <span class="detail-sale-badge">
+                            <i class="fas fa-shopping-bag"></i> Đã bán: <strong>@Model.product.OrderDetails.Count</strong> lượt mua
+                        </span>
+                        <span class="detail-status-badge">
+                            <i class="fas fa-check-circle"></i> Còn hàng
+                        </span>
+                    </div>
+
+                    <div class="detail-price-box">
+                        <span class="detail-price-label">Đơn giá niêm yết:</span>
+                        <span class="detail-price-value">@Model.product.ProductPrice.ToString("N0") đ</span>
+                    </div>
+
+                    <div class="detail-desc-box">
+                        <h4><i class="fas fa-info-circle"></i> Mô tả chi tiết sản phẩm</h4>
+                        <p class="detail-desc-text">@Model.product.ProductDescription</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CỘT 2: KHỐI TẠM TÍNH (Nhân số lượng trực tiếp đơn giá) -->
+        <div class="col-md-3 col-sm-12">
+            <div class="detail-card calc-card sticky-calc-card">
+                <div class="calc-card-header">
+                    <h3><i class="fas fa-calculator"></i> Đặt mua &amp; Tạm tính</h3>
+                    <p class="calc-subtitle">Cập nhật thành tiền trực tiếp theo số lượng</p>
+                </div>
+
+                @using (Html.BeginForm("ProductDetails", "Home", FormMethod.Get, new { id = "calcForm" }))
+                {
+                    <input type="hidden" name="id" value="@Model.product.ProductID" />
+
+                    <div class="form-group calc-qty-group">
+                        <label for="quantityInput" class="calc-label">Chọn số lượng đặt mua:</label>
+                        <div class="input-group qty-spinner-group">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default btn-qty-step" onclick="stepDetailQty(-1)">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </span>
+                            @Html.TextBoxFor(model => model.quantity, new
+                            {
+                                @id = "quantityInput",
+                                @class = "form-control text-center calc-qty-field",
+                                @type = "number",
+                                @min = 1,
+                                @max = 99,
+                                onchange = "document.getElementById('calcForm').submit();"
+                            })
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default btn-qty-step" onclick="stepDetailQty(1)">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="calc-summary-panel">
+                        <div class="calc-summary-row">
+                            <span>Đơn giá:</span>
+                            <span>@Model.product.ProductPrice.ToString("N0") đ</span>
+                        </div>
+                        <div class="calc-summary-row">
+                            <span>Số lượng:</span>
+                            <span id="displayQty">x @Model.quantity</span>
+                        </div>
+                        <hr class="calc-divider" />
+                        <div class="calc-total-row">
+                            <span class="calc-total-title">Tổng tạm tính:</span>
+                            <span class="calc-total-amount">@Model.estimatedValue.ToString("N0") đ</span>
+                        </div>
+                    </div>
+
+                    <div class="calc-actions">
+                        <a href="@Url.Action("AddToCart", "Cart", new { id = Model.product.ProductID, quantity = Model.quantity })"
+                           class="btn btn-block btn-add-cart">
+                            <i class="fas fa-cart-plus"></i> Thêm vào giỏ hàng
+                        </a>
+
+                        <a href="@Url.Action("Index2", "Cart")" class="btn btn-block btn-view-cart">
+                            <i class="fas fa-shopping-cart"></i> Xem giỏ hàng ngay
+                        </a>
+                    </div>
+                }
+
+                <div class="calc-guarantee-box">
+                    <p><i class="fas fa-truck"></i> Giao hàng toàn quốc trong 24-48h</p>
+                    <p><i class="fas fa-sync-alt"></i> Đổi trả miễn phí 7 ngày</p>
+                    <p><i class="fas fa-shield-alt"></i> Bảo hành chính hãng 12 tháng</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- CỘT 3: KHỐI GỢI Ý (Nạp hai khung Partial View con: SP cùng loại & SP bán chạy) -->
+        <div class="col-md-4 col-sm-12">
+            <div class="detail-card suggest-card">
+                <div class="suggest-header">
+                    <h3><i class="fas fa-magic"></i> Gợi ý dành cho bạn</h3>
+                    <p class="suggest-subtitle">Nạp hai khung Partial View chuyên biệt</p>
+                </div>
+
+                <!-- Khung gợi ý 1: Sản phẩm cùng loại (Partial View con) -->
+                <div class="suggest-partial-section">
+                    <div class="suggest-subhead">
+                        <span class="suggest-badge blue-badge"><i class="fas fa-tags"></i> CÙNG LOẠI</span>
+                        <h4>Sản phẩm cùng chuyên mục</h4>
+                    </div>
+                    @Html.Partial("_PVRelatedProduct", Model)
+                </div>
+
+                <hr class="suggest-divider" />
+
+                <!-- Khung gợi ý 2: Sản phẩm bán chạy (Partial View con) -->
+                <div class="suggest-partial-section">
+                    <div class="suggest-subhead">
+                        <span class="suggest-badge red-badge"><i class="fas fa-fire"></i> BÁN CHẠY NHẤT</span>
+                        <h4>Top sản phẩm mua nhiều</h4>
+                    </div>
+                    @Html.Partial("_PVTopProduct", Model)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function stepDetailQty(delta) {
+        var input = document.getElementById('quantityInput');
+        if (!input) return;
+        var current = parseInt(input.value) || 1;
+        var next = current + delta;
+        if (next < 1) next = 1;
+        if (next > 99) next = 99;
+        input.value = next;
+        document.getElementById('calcForm').submit();
+    }
+</script>

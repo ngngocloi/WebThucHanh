@@ -1,0 +1,474 @@
+/* =========================================================
+   CHI TIẾT SẢN PHẨM - BỐ CỤC 3 CỘT CHUẨN ĐẶC TẢ KỸ THUẬT SLIDE 8
+   ========================================================= */
+
+.pro-detail-wrapper {
+    padding: 16px 0 35px 0;
+}
+
+.detail-breadcrumb {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 10px 18px;
+    margin-bottom: 20px;
+    font-size: 13.5px;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+}
+
+.detail-breadcrumb a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.detail-breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.detail-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+/* CỘT 1: KHỐI THÔNG TIN */
+.info-card {
+    border-top: 4px solid #2563eb;
+}
+
+.detail-main-img-wrap {
+    position: relative;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.detail-real-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(4px);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.3px;
+    z-index: 2;
+}
+
+.detail-main-img {
+    max-height: 380px;
+    max-width: 100%;
+    object-fit: contain;
+    margin: 0 auto;
+    display: block;
+    transition: transform 0.25s ease;
+}
+
+.detail-main-img:hover {
+    transform: scale(1.03);
+}
+
+.detail-category-tag {
+    display: inline-block;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 12px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+}
+
+.detail-prod-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.35;
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+
+.detail-meta-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.detail-sale-badge {
+    background: #f1f5f9;
+    color: #334155;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.detail-status-badge {
+    background: #dcfce7;
+    color: #15803d;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.detail-price-box {
+    background: linear-gradient(135deg, #fef2f2 0%, #fff1f2 100%);
+    border: 1px solid #fecdd3;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+}
+
+.detail-price-label {
+    font-size: 13.5px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.detail-price-value {
+    font-size: 26px;
+    font-weight: 900;
+    color: #dc2626;
+    letter-spacing: -0.5px;
+}
+
+.detail-desc-box {
+    background: #ffffff;
+    border-top: 1px dashed #e2e8f0;
+    padding-top: 16px;
+}
+
+.detail-desc-box h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.detail-desc-text {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #475569;
+    margin: 0;
+}
+
+/* CỘT 2: KHỐI TẠM TÍNH */
+.calc-card {
+    border-top: 4px solid #ea580c;
+    background: #ffffff;
+}
+
+.sticky-calc-card {
+    position: sticky;
+    top: 124px;
+}
+
+.calc-card-header h3 {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-top: 0;
+    margin-bottom: 4px;
+}
+
+.calc-subtitle {
+    font-size: 12.5px;
+    color: #64748b;
+    margin-bottom: 16px;
+}
+
+.calc-label {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.qty-spinner-group {
+    display: flex;
+    align-items: stretch;
+    max-width: 170px;
+    margin: 0 auto 18px auto;
+}
+
+.btn-qty-step {
+    border: 1px solid #cbd5e1;
+    background: #f8fafc;
+    color: #334155;
+    font-weight: bold;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.btn-qty-step:hover {
+    background: #e2e8f0;
+}
+
+.calc-qty-field {
+    height: 38px;
+    font-size: 16px;
+    font-weight: 800;
+    color: #0f172a;
+    border-left: none;
+    border-right: none;
+    border-color: #cbd5e1;
+    text-align: center;
+}
+
+.calc-summary-panel {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 18px;
+}
+
+.calc-summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13.5px;
+    color: #64748b;
+    margin-bottom: 6px;
+}
+
+.calc-divider {
+    margin: 10px 0;
+    border-color: #e2e8f0;
+}
+
+.calc-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.calc-total-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.calc-total-amount {
+    font-size: 22px;
+    font-weight: 900;
+    color: #ea580c;
+}
+
+.btn-add-cart {
+    background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+    color: #ffffff !important;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 12px 18px;
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 4px 12px rgba(234, 88, 12, 0.35);
+    margin-bottom: 10px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-add-cart:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(220, 38, 38, 0.45);
+}
+
+.btn-view-cart {
+    background: #ffffff;
+    color: #334155 !important;
+    border: 1px solid #cbd5e1;
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    transition: background-color 0.15s ease;
+}
+
+.btn-view-cart:hover {
+    background: #f1f5f9;
+}
+
+.calc-guarantee-box {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px dashed #e2e8f0;
+}
+
+.calc-guarantee-box p {
+    font-size: 12.5px;
+    color: #475569;
+    margin-bottom: 6px;
+}
+
+.calc-guarantee-box i {
+    color: #16a34a;
+    margin-right: 6px;
+    width: 16px;
+}
+
+/* CỘT 3: KHỐI GỢI Ý */
+.suggest-card {
+    border-top: 4px solid #10b981;
+}
+
+.suggest-header h3 {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-top: 0;
+    margin-bottom: 4px;
+}
+
+.suggest-subtitle {
+    font-size: 12.5px;
+    color: #64748b;
+    margin-bottom: 18px;
+}
+
+.suggest-subhead {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.suggest-subhead h4 {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+}
+
+.suggest-badge {
+    font-size: 10.5px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.5px;
+}
+
+.blue-badge {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.red-badge {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.suggest-divider {
+    margin: 22px 0;
+    border-color: #e2e8f0;
+}
+
+.suggest-partial-section .feature-container {
+    padding-bottom: 8px;
+}
+
+.suggest-partial-section .fproduct-item {
+    flex: 0 0 170px;
+    min-width: 170px;
+}
+
+.suggest-partial-section .fproduct-item img {
+    height: 120px;
+}
+
+/* Mini Product Card cho Kh?i G?i � */
+.related-prod-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 480px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.mini-prod-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 8px 10px;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.mini-prod-card:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.mini-prod-thumb {
+    flex: 0 0 54px;
+    height: 54px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.mini-prod-thumb img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.mini-prod-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.mini-prod-name {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1e293b;
+    text-decoration: none !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
+}
+
+.mini-prod-name:hover {
+    color: #2563eb;
+}
+
+.mini-prod-price {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #dc2626;
+}
+
+.mini-prod-sale {
+    font-size: 11.5px;
+    color: #64748b;
+    margin-top: 1px;
+}

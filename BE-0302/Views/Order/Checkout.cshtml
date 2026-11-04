@@ -1,0 +1,247 @@
+﻿@model BE_0302.Models.ViewModel.CheckoutVM
+
+@{
+    ViewBag.Title = "Thanh toán & Đặt hàng";
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+}
+
+<style>
+    .checkout-wrap {
+        padding: 10px 0 35px 0;
+    }
+    .checkout-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+    }
+    .checkout-title {
+        font-size: 24px;
+        font-weight: 800;
+        color: #0f172a;
+        margin-top: 0;
+        margin-bottom: 20px;
+    }
+    .checkout-section-head {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1e293b;
+        margin-top: 0;
+        margin-bottom: 14px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #f1f5f9;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .checkout-thumb {
+        width: 60px;
+        height: 60px;
+        object-fit: contain;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 4px;
+    }
+    .payment-radio-box, .shipping-radio-box {
+        display: block;
+        background: #f8fafc;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+    .payment-radio-box:hover, .shipping-radio-box:hover {
+        background: #eff6ff;
+        border-color: #3b82f6;
+    }
+    .btn-submit-order {
+        background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+        color: #ffffff !important;
+        font-size: 16px;
+        font-weight: 800;
+        padding: 14px 24px;
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 6px 18px rgba(220, 38, 38, 0.35);
+        cursor: pointer;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn-submit-order:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 22px rgba(220, 38, 38, 0.5);
+    }
+</style>
+
+<script>
+    function enableAddressEdit() {
+        var addrInput = document.getElementById("shippingAddress");
+        addrInput.removeAttribute("readonly");
+        addrInput.focus();
+        document.getElementById("btnEditAddr").style.display = "none";
+    }
+</script>
+
+<div class="checkout-wrap">
+    <h2 class="checkout-title"><i class="fas fa-file-invoice-dollar text-danger"></i> XÁC NHẬN ĐƠN HÀNG &amp; THANH TOÁN</h2>
+
+    @using (Html.BeginForm("Checkout", "Order", FormMethod.Post, new { id = "checkoutForm" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.CustomerID)
+        @Html.HiddenFor(m => m.Username)
+        @Html.HiddenFor(m => m.OrderDate)
+
+        <div class="row">
+            <!-- CỘT TRÁI: DANH SÁCH MẶT HÀNG TRONG ĐƠN -->
+            <div class="col-md-7 col-sm-12">
+                <div class="checkout-card">
+                    <h3 class="checkout-section-head">
+                        <i class="fas fa-boxes text-primary"></i> 1. Danh sách sản phẩm đặt mua
+                    </h3>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover" style="vertical-align: middle;">
+                            <thead>
+                                <tr style="background:#f8fafc; font-size:13px; color:#475569;">
+                                    <th colspan="2">Sản phẩm</th>
+                                    <th class="text-center">Số lượng</th>
+                                    <th>Đơn giá</th>
+                                    <th class="text-right">Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.CartItems != null)
+                                {
+                                    foreach (var item in Model.CartItems)
+                                    {
+                                        <tr>
+                                            <td style="width: 70px;">
+                                                <img src="@Url.Content(item.ImageUrl)"
+                                                     alt="@item.ProductName"
+                                                     class="checkout-thumb"
+                                                     onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/default-product.svg")';" />
+                                            </td>
+                                            <td>
+                                                <strong style="color:#0f172a;">@item.ProductName</strong>
+                                                <div style="font-size:12px; color:#64748b;">Mã SP: #@item.ProductID • @item.Category</div>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge" style="background:#e2e8f0; color:#0f172a; font-weight:700;">x @item.Quantity</span>
+                                            </td>
+                                            <td style="color:#475569;">@item.UnitPrice.ToString("N0") đ</td>
+                                            <td class="text-right" style="font-weight:700; color:#dc2626;">@item.TotalPrice.ToString("N0") đ</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="text-align:right; padding:10px 0;">
+                        <a href="@Url.Action("Index2", "Cart")" class="btn btn-default btn-sm" style="font-weight:600;">
+                            <i class="fas fa-pencil-alt"></i> Thay đổi giỏ hàng
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CỘT PHẢI: ĐỊA CHỈ, PHƯƠNG THỨC & TỔNG TIỀN (SLIDE 10) -->
+            <div class="col-md-5 col-sm-12">
+                <div class="checkout-card">
+                    <h3 class="checkout-section-head">
+                        <i class="fas fa-map-marker-alt text-danger"></i> 2. Địa chỉ nhận hàng
+                    </h3>
+
+                    <div class="form-group">
+                        <label style="font-size:13px; color:#475569;">Địa chỉ giao hàng (Lấy mặc định từ thông tin khách hàng):</label>
+                        <div class="input-group">
+                            @Html.TextBoxFor(m => m.ShippingAddress, new
+                            {
+                                @class = "form-control",
+                                @id = "shippingAddress",
+                                @readonly = "readonly",
+                                @style = "background-color: #f8fafc; font-weight: 600;"
+                            })
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" id="btnEditAddr" onclick="enableAddressEdit()" title="Thay đổi địa chỉ">
+                                    <i class="fas fa-edit"></i> Sửa
+                                </button>
+                            </span>
+                        </div>
+                        @Html.ValidationMessageFor(m => m.ShippingAddress, "", new { @class = "text-danger" })
+                    </div>
+
+                    <h3 class="checkout-section-head" style="margin-top:24px;">
+                        <i class="fas fa-truck text-warning"></i> 3. Phương thức giao hàng
+                    </h3>
+                    <div class="form-group">
+                        <label class="shipping-radio-box">
+                            @Html.RadioButtonFor(m => m.ShippingMethod, "Giao hàng nhanh", new { @checked = "checked" })
+                            <strong>Giao hàng nhanh (24h - 48h)</strong>
+                            <span class="pull-right text-success" style="font-weight:700;">MIỄN PHÍ</span>
+                        </label>
+                        <label class="shipping-radio-box">
+                            @Html.RadioButtonFor(m => m.ShippingMethod, "Giao hàng tiết kiệm")
+                            <strong>Giao hàng tiết kiệm (3 - 5 ngày)</strong>
+                            <span class="pull-right text-success" style="font-weight:700;">MIỄN PHÍ</span>
+                        </label>
+                    </div>
+
+                    <h3 class="checkout-section-head" style="margin-top:24px;">
+                        <i class="fas fa-credit-card text-success"></i> 4. Phương thức thanh toán
+                    </h3>
+                    <div class="form-group">
+                        <label class="payment-radio-box">
+                            @Html.RadioButtonFor(m => m.PaymentMethod, "Tiền mặt", new { @checked = "checked" })
+                            <i class="fas fa-money-bill-wave text-success"></i>
+                            <strong>Thanh toán tiền mặt khi nhận hàng (COD)</strong>
+                        </label>
+
+                        <label class="payment-radio-box">
+                            @Html.RadioButtonFor(m => m.PaymentMethod, "Paypal")
+                            <i class="fab fa-paypal text-primary"></i>
+                            <strong>Thanh toán trực tuyến quốc tế PayPal</strong>
+                            <span class="pull-right"><img src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg" alt="PayPal" style="height:20px;" /></span>
+                        </label>
+
+                        <label class="payment-radio-box">
+                            @Html.RadioButtonFor(m => m.PaymentMethod, "Mua trước trả sau")
+                            <i class="fas fa-calendar-check text-info"></i>
+                            <strong>Mua trước trả sau (Trả góp 0% lãi suất)</strong>
+                        </label>
+                    </div>
+
+                    <hr style="margin:20px 0;" />
+
+                    <!-- TỔNG TIỀN VÀ NÚT ĐẶT HÀNG -->
+                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:16px; margin-bottom:20px;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:14px; color:#64748b;">
+                            <span>Tạm tính tiền hàng:</span>
+                            <span style="font-weight:600; color:#0f172a;">@Model.TotalAmount.ToString("N0") đ</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-size:14px; color:#64748b;">
+                            <span>Phí giao hàng:</span>
+                            <span style="font-weight:700; color:#16a34a;">0 đ</span>
+                        </div>
+                        <hr style="margin:8px 0;" />
+                        <div style="display:flex; justify-content:space-between; align-items:baseline;">
+                            <span style="font-size:16px; font-weight:800; color:#0f172a;">TỔNG THANH TOÁN:</span>
+                            <span style="font-size:24px; font-weight:900; color:#dc2626;">@Model.TotalAmount.ToString("N0") đ</span>
+                        </div>
+                    </div>
+
+                    @Html.HiddenFor(m => m.TotalAmount)
+
+                    <button type="submit" class="btn btn-block btn-submit-order">
+                        <i class="fas fa-check-circle"></i> XÁC NHẬN ĐẶT HÀNG
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+</div>

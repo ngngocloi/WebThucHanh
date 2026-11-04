@@ -1,0 +1,64 @@
+﻿@model BE_0302.Models.ViewModel.LoginVM
+@{
+    ViewBag.Title = "Đăng nhập tài khoản";
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+}
+
+<div class="container" style="max-width: 520px; margin-top: 30px; margin-bottom: 50px;">
+    <div class="auth-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 32px; box-shadow: 0 4px 20px rgba(15,23,42,0.06);">
+        <div style="text-align: center; margin-bottom: 24px;">
+            <div style="width: 56px; height: 56px; background: #fee2e2; color: #dc2626; font-size: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h2 style="font-weight: 800; font-size: 24px; color: #0f172a; margin: 0 0 6px 0;">ĐĂNG NHẬP</h2>
+            <p style="color: #64748b; font-size: 13.5px; margin: 0;">Truy cập vào hệ thống thương mại điện tử FASTOR</p>
+        </div>
+
+        @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true, "", new { @class = "alert alert-danger", style = "font-size:13.5px; border-radius:8px;" })
+
+            <div class="form-group" style="margin-bottom: 18px;">
+                <label for="Username" style="font-weight: 700; font-size: 13.5px; color: #334155; margin-bottom: 6px;">
+                    <i class="fas fa-user text-muted"></i> Tên đăng nhập:
+                </label>
+                @Html.TextBoxFor(m => m.Username, new
+                {
+                    @class = "form-control",
+                    placeholder = "Nhập tên đăng nhập của bạn...",
+                    style = "height: 44px; font-size: 14px; border-radius: 8px;"
+                })
+                @Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger", style = "font-size:12.5px;" })
+            </div>
+
+            <div class="form-group" style="margin-bottom: 24px;">
+                <label for="Password" style="font-weight: 700; font-size: 13.5px; color: #334155; margin-bottom: 6px;">
+                    <i class="fas fa-key text-muted"></i> Mật khẩu:
+                </label>
+                @Html.PasswordFor(m => m.Password, new
+                {
+                    @class = "form-control",
+                    placeholder = "Nhập mật khẩu...",
+                    style = "height: 44px; font-size: 14px; border-radius: 8px;"
+                })
+                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger", style = "font-size:12.5px;" })
+            </div>
+
+            <button type="submit" class="btn btn-danger btn-block" style="height: 46px; font-weight: 800; font-size: 15px; border-radius: 8px; background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%); border: none; box-shadow: 0 4px 12px rgba(220,38,38,0.35);">
+                <i class="fas fa-sign-in-alt"></i> ĐĂNG NHẬP NGAY
+            </button>
+        }
+
+        <div style="text-align: center; margin-top: 22px; padding-top: 18px; border-top: 1px dashed #e2e8f0; font-size: 13.5px; color: #64748b;">
+            Chưa có tài khoản?
+            <a href="@Url.Action("Register", "Account")" style="font-weight: 700; color: #2563eb; text-decoration: none;">
+                Đăng ký thành viên mới
+            </a>
+        </div>
+        
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; margin-top: 16px; font-size: 12px; color: #64748b;">
+            <i class="fas fa-info-circle text-primary"></i> <strong>Tài khoản mẫu:</strong> loinguyen / 123456 hoặc customer / 123456
+        </div>
+    </div>
+</div>

@@ -1,0 +1,334 @@
+﻿@{
+    var cart = Session["Cart"] as BE_0302.Models.ViewModel.Cart;
+
+    ViewBag.pmmodel = new BE_0302.Models.ViewModel.PersonalMenuVM
+    {
+        IsLoggedIn = User.Identity.IsAuthenticated,
+        Username = User.Identity.IsAuthenticated ? User.Identity.Name : string.Empty
+    };
+
+    if (cart != null && cart.Items.Any())
+    {
+        ViewBag.pmmodel.CartCount = cart.Items.Count();
+    }
+
+    var currentController = (ViewContext.RouteData.Values["controller"] ?? "").ToString();
+    var currentAction = (ViewContext.RouteData.Values["action"] ?? "").ToString();
+    bool isHomePage = string.Equals(currentController, "Home", StringComparison.OrdinalIgnoreCase)
+                      && string.Equals(currentAction, "Index", StringComparison.OrdinalIgnoreCase);
+    bool isCartPage = string.Equals(currentController, "Cart", StringComparison.OrdinalIgnoreCase);
+    bool isAccountPage = string.Equals(currentController, "Account", StringComparison.OrdinalIgnoreCase)
+                         || string.Equals(currentController, "Order", StringComparison.OrdinalIgnoreCase);
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Store: @ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    <!-- Google Fonts hỗ trợ tiếng Việt chuẩn Unicode: Be Vietnam Pro & Roboto -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+</head>
+<body id="page-top">
+    <!-- KHỐI ĐẦU TRANG & THANH ĐIỀU HƯỚNG CỐ ĐỊNH (SLIDE 04) -->
+    <div class="customer-fixed-header" id="mainFixedHeader">
+        <!-- Thanh tiến trình cuộn trang mượt mà -->
+        <div class="scroll-progress-track">
+            <div class="scroll-progress-bar" id="scrollProgressBar"></div>
+        </div>
+
+        <!-- Biểu ngữ quảng cáo tĩnh (Khối Đầu Trang theo Slide 04) -->
+        <div class="topbar-promo">
+            <div class="container topbar-inner">
+                <div>
+                    <i class="fas fa-shipping-fast"></i> Miễn phí vận chuyển đơn từ 40k, giảm thêm cùng
+                    <span class="promo-highlight">FREESHIP XTRA</span>
+                </div>
+                <div class="topbar-quick-links hidden-xs">
+                    <span><i class="fas fa-check-circle"></i> Hình ảnh sản phẩm thực tế 100%</span>
+                    <span class="topbar-sep">•</span>
+                    <span><i class="fas fa-shield-alt"></i> Hàng chính hãng bảo hành 12 tháng</span>
+                </div>
+            </div>
+        </div>
+
+        <nav class="navbar navbar-default customer-navbar" role="navigation" aria-label="Menu chính">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#customer-navbar-collapse" title="Mở menu">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a href="@Url.Action("Index", "Home")" class="navbar-brand">
+                        <span class="brand-logo-icon"><i class="fas fa-store"></i></span>
+                        <span class="brand-text">FASTOR</span>
+                    </a>
+                </div>
+
+                <div class="navbar-collapse collapse" id="customer-navbar-collapse">
+                    <!-- MENU DANH MỤC: TÁCH RIÊNG TỆP _CategoriesPV.cshtml (SLIDE 04) -->
+                    @Html.Action("CategoryMenu", "Home")
+
+                    @if (isHomePage)
+                    {
+                        <ul class="nav navbar-nav nav-section-scroller hidden-sm">
+                            <li>
+                                <a href="#searchProd" class="scroll-spy-link" data-target="searchProd">
+                                    <i class="fas fa-search"></i> Tìm kiếm
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#featureProd" class="scroll-spy-link" data-target="featureProd">
+                                    <i class="fas fa-fire-alt"></i> Nổi bật (Top 10)
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#newProd" class="scroll-spy-link" data-target="newProd">
+                                    <i class="fas fa-sparkles"></i> Sản phẩm mới (20 SP)
+                                </a>
+                            </li>
+                        </ul>
+                    }
+
+                    <!-- MENU CÁ NHÂN: KIỂM SOÁT TRẠNG THÁI QUA PersonalMenuVM (SLIDE 04) -->
+                    <ul class="nav navbar-nav navbar-right nav-menu-right">
+                        <li class="@(isHomePage ? "active-nav-item" : "")">
+                            <a href="@Url.Action("Index", "Home")">
+                                <i class="fas fa-home"></i> Trang chủ
+                            </a>
+                        </li>
+
+                        <li class="nav-dropdown @(isAccountPage ? "active-nav-item" : "")" id="account-nav-dropdown">
+                            <a href="javascript:void(0)" class="nav-dropdown-toggle" id="account-name">
+                                <i class="fas fa-user-circle"></i>
+                                @if (ViewBag.pmmodel.IsLoggedIn)
+                                {
+                                    <span>Xin chào, <strong>@ViewBag.pmmodel.Username</strong></span>
+                                }
+                                else
+                                {
+                                    <span>Tài khoản</span>
+                                }
+                                <i class="fas fa-chevron-down nav-caret"></i>
+                            </a>
+                            <div class="nav-dropdown-menu nav-dropdown-right">
+                                <div class="nav-dropdown-header">
+                                    <i class="fas fa-user-shield"></i> TÀI KHOẢN CỦA BẠN
+                                </div>
+                                @if (ViewBag.pmmodel.IsLoggedIn)
+                                {
+                                    <a href="@Url.Action("ProfileInfo", "Account")" class="nav-dropdown-item">
+                                        <span class="item-icon"><i class="fas fa-id-card"></i></span>
+                                        <span class="item-label">Thông tin tài khoản</span>
+                                    </a>
+                                    <a href="@Url.Action("OrderHistory", "Order")" class="nav-dropdown-item">
+                                        <span class="item-icon"><i class="fas fa-box-open"></i></span>
+                                        <span class="item-label">Lịch sử đơn hàng</span>
+                                    </a>
+                                    <div class="nav-dropdown-divider"></div>
+                                    <a href="@Url.Action("Logout", "Account")" class="nav-dropdown-item item-danger">
+                                        <span class="item-icon"><i class="fas fa-sign-out-alt"></i></span>
+                                        <span class="item-label">Đăng xuất</span>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("Login", "Account")" class="nav-dropdown-item">
+                                        <span class="item-icon"><i class="fas fa-sign-in-alt"></i></span>
+                                        <span class="item-label">Đăng nhập tài khoản</span>
+                                    </a>
+                                    <a href="@Url.Action("Register", "Account")" class="nav-dropdown-item">
+                                        <span class="item-icon"><i class="fas fa-user-plus"></i></span>
+                                        <span class="item-label">Đăng ký thành viên</span>
+                                    </a>
+                                }
+                            </div>
+                        </li>
+
+                        <li class="cart-nav-item @(isCartPage ? "active-nav-item" : "")">
+                            <a href="@Url.Action("Index2", "Cart")" class="cart-nav-btn">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span>Giỏ hàng</span>
+                                <span id="cart-count" class="cart-badge">@ViewBag.pmmodel.CartCount</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <!-- KHỐI NỘI DUNG CHÍNH CỦA TRANG -->
+    <div class="container body-content">
+        @RenderBody()
+
+        <!-- KHỐI CHÂN TRANG: HIỂN THỊ THÔNG TIN NHÓM PHÁT TRIỂN (SLIDE 04) -->
+        <footer class="site-footer">
+            <div class="row">
+                <div class="col-md-6 col-sm-12">
+                    <p><strong><i class="fas fa-store"></i> FASTOR E-Commerce (BE-0302)</strong></p>
+                    <p>&copy; @DateTime.Now.Year - Hệ thống mua sắm trực tuyến MyStore (Chuẩn Unicode Tiếng Việt)</p>
+                    <p><small class="text-muted">Đặc tả kỹ thuật ASP.NET MVC 5 &amp; Entity Framework 6</small></p>
+                </div>
+                <div class="col-md-6 col-sm-12 text-right footer-right-col">
+                    <p><strong><i class="fas fa-users-cog"></i> Thông tin nhóm phát triển dự án</strong></p>
+                    <p>Sinh viên thực hiện: <strong>Nguyễn Ngọc Lợi</strong> (Mã SV: 25DH110875)</p>
+                    <p><small class="text-muted">Giảng viên hướng dẫn: <strong>ThS. Bùi Thị Thanh Tú</strong></small></p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Nút nổi Cuộn lên đầu trang (Back to Top) -->
+    <button type="button" id="backToTopBtn" class="back-to-top-btn" title="Cuộn lên đầu trang" aria-label="Cuộn lên đầu trang">
+        <i class="fas fa-arrow-up"></i>
+        <span>Đầu trang</span>
+    </button>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script>
+        (function () {
+            // 1. Hỗ trợ đóng/mở Menu Dropdown
+            var dropdowns = document.querySelectorAll('.nav-dropdown');
+            dropdowns.forEach(function (dd) {
+                var toggle = dd.querySelector('.nav-dropdown-toggle');
+                if (toggle) {
+                    toggle.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        var isOpen = dd.classList.contains('open');
+                        dropdowns.forEach(function (other) { other.classList.remove('open'); });
+                        if (!isOpen) dd.classList.add('open');
+                    });
+                }
+            });
+            document.addEventListener('click', function () {
+                dropdowns.forEach(function (dd) { dd.classList.remove('open'); });
+            });
+
+            // 2. Xử lý Cuộn trang: Thanh tiến trình, Sticky Header, ScrollSpy & Back-to-Top
+            var header = document.getElementById('mainFixedHeader');
+            var progressBar = document.getElementById('scrollProgressBar');
+            var backToTopBtn = document.getElementById('backToTopBtn');
+            var spyLinks = document.querySelectorAll('.scroll-spy-link');
+
+            function onWindowScroll() {
+                var scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
+                var docHeight = Math.max(document.documentElement.scrollHeight - document.documentElement.clientHeight, 1);
+                var progress = Math.min(100, Math.max(0, (scrollTop / docHeight) * 100));
+
+                if (progressBar) {
+                    progressBar.style.width = progress + '%';
+                }
+                if (header) {
+                    if (scrollTop > 30) header.classList.add('header-scrolled');
+                    else header.classList.remove('header-scrolled');
+                }
+                if (backToTopBtn) {
+                    if (scrollTop > 220) backToTopBtn.classList.add('is-visible');
+                    else backToTopBtn.classList.remove('is-visible');
+                }
+
+                // ScrollSpy đánh dấu phân khu đang xem trên menu
+                if (spyLinks.length > 0) {
+                    var currentSection = '';
+                    ['searchProd', 'featureProd', 'newProd'].forEach(function (id) {
+                        var el = document.getElementById(id);
+                        if (el && scrollTop + 160 >= el.offsetTop) {
+                            currentSection = id;
+                        }
+                    });
+                    spyLinks.forEach(function (link) {
+                        if (link.getAttribute('data-target') === currentSection) {
+                            link.parentElement.classList.add('active-spy-item');
+                        } else {
+                            link.parentElement.classList.remove('active-spy-item');
+                        }
+                    });
+                }
+            }
+
+            window.addEventListener('scroll', onWindowScroll, { passive: true });
+            onWindowScroll();
+
+            if (backToTopBtn) {
+                backToTopBtn.addEventListener('click', function () {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+
+            // 3. Điều khiển Cuộn ngang mượt mà cho Carousel Sản phẩm nổi bật
+            var carousels = document.querySelectorAll('[data-carousel-container]');
+            carousels.forEach(function (wrap) {
+                var track = wrap.querySelector('.feature-container');
+                var prevBtns = wrap.querySelectorAll('[data-carousel-prev]');
+                var nextBtns = wrap.querySelectorAll('[data-carousel-next]');
+                var dots = wrap.querySelectorAll('[data-carousel-dot]');
+                if (!track) return;
+
+                function scrollStep(dir) {
+                    var step = Math.max(track.clientWidth * 0.72, 440);
+                    track.scrollBy({ left: dir * step, behavior: 'smooth' });
+                }
+
+                prevBtns.forEach(function (btn) {
+                    btn.addEventListener('click', function () { scrollStep(-1); });
+                });
+                nextBtns.forEach(function (btn) {
+                    btn.addEventListener('click', function () { scrollStep(1); });
+                });
+
+                function updateDots() {
+                    var maxScroll = Math.max(track.scrollWidth - track.clientWidth, 1);
+                    var ratio = track.scrollLeft / maxScroll;
+                    var activeIdx = Math.min(dots.length - 1, Math.max(0, Math.round(ratio * (dots.length - 1))));
+                    dots.forEach(function (d, idx) {
+                        if (idx === activeIdx) d.classList.add('active');
+                        else d.classList.remove('active');
+                    });
+                }
+
+                dots.forEach(function (dot, idx) {
+                    dot.addEventListener('click', function () {
+                        var maxScroll = Math.max(track.scrollWidth - track.clientWidth, 0);
+                        var targetLeft = dots.length > 1 ? (idx / (dots.length - 1)) * maxScroll : 0;
+                        track.scrollTo({ left: targetLeft, behavior: 'smooth' });
+                    });
+                });
+
+                track.addEventListener('scroll', updateDots, { passive: true });
+
+                // Hỗ trợ kéo chuột (Drag-to-scroll) trên máy tính
+                var isDown = false, startX = 0, scrollLeftStart = 0;
+                track.addEventListener('mousedown', function (e) {
+                    isDown = true;
+                    track.classList.add('is-dragging');
+                    startX = e.pageX - track.offsetLeft;
+                    scrollLeftStart = track.scrollLeft;
+                });
+                window.addEventListener('mouseup', function () {
+                    isDown = false;
+                    track.classList.remove('is-dragging');
+                });
+                track.addEventListener('mousemove', function (e) {
+                    if (!isDown) return;
+                    e.preventDefault();
+                    var x = e.pageX - track.offsetLeft;
+                    var walk = (x - startX) * 1.4;
+                    track.scrollLeft = scrollLeftStart - walk;
+                });
+            });
+        })();
+    </script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

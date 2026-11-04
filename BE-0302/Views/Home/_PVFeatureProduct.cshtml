@@ -1,0 +1,73 @@
+﻿@model BE_0302.Models.ViewModel.HomeProductVM
+
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/myStyle/CustomerHome.css")" />
+
+@if (Model.FeaturedProducts != null && Model.FeaturedProducts.Any())
+{
+    <section id="featureProd" class="container-fluid featureProd" data-carousel-container>
+        <div class="section-header-bar">
+            <div class="section-title-group">
+                <span class="section-eyebrow"><i class="fas fa-fire-alt"></i> TOP BÁN CHẠY</span>
+                <h2>Sản phẩm nổi bật</h2>
+            </div>
+            <div class="carousel-header-controls">
+                <span class="scroll-hint hidden-xs"><i class="fas fa-arrows-alt-h"></i> Kéo ngang hoặc bấm nút để cuộn</span>
+                <button type="button" class="carousel-ctrl-btn" data-carousel-prev title="Cuộn sang trái" aria-label="Cuộn sang trái">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button type="button" class="carousel-ctrl-btn" data-carousel-next title="Cuộn sang phải" aria-label="Cuộn sang phải">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="feature-carousel-stage">
+            <button type="button" class="carousel-floating-btn prev" data-carousel-prev aria-label="Trước">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+
+            <div class="feature-container">
+                @foreach (var product in Model.FeaturedProducts)
+                {
+                    <div class="fproduct-item">
+                        <div class="prod-img-wrap">
+                            <span class="real-photo-badge"><i class="fas fa-camera"></i> Ảnh thực tế</span>
+                            <a href="@Url.Action("ProductDetails", "Home", new { id = product.ProductID })">
+                                <img src="@Url.Content(product.ImageUrl)"
+                                     alt="@product.ProductName"
+                                     onerror="this.onerror=null;this.src='@Url.Content(product.FallbackImageUrl)';" />
+                            </a>
+                        </div>
+                        <div class="prod-info-wrap">
+                            <p class="prodPrice">
+                                @product.ProductPrice.ToString("N0") đ
+                            </p>
+                            <p class="prodName">
+                                <a href="@Url.Action("ProductDetails", "Home", new { id = product.ProductID })">
+                                    @product.ProductName
+                                </a>
+                            </p>
+                            <p class="prodCate">
+                                <i class="fas fa-folder-open"></i> @(product.Category != null ? product.Category.CategoryName : "Sản phẩm")
+                            </p>
+                            <div class="prod-footer-meta">
+                                <span class="prodSale"><i class="fas fa-check-circle"></i> Đã bán: @product.OrderDetails.Count</span>
+                                <a href="@Url.Action("ProductDetails", "Home", new { id = product.ProductID })" class="prod-detail-link">Xem <i class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <button type="button" class="carousel-floating-btn next" data-carousel-next aria-label="Tiếp">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+
+        <div class="carousel-dots" aria-label="Chỉ báo vị trí cuộn">
+            <button type="button" class="carousel-dot active" data-carousel-dot="0" aria-label="Trang cuộn 1"></button>
+            <button type="button" class="carousel-dot" data-carousel-dot="1" aria-label="Trang cuộn 2"></button>
+            <button type="button" class="carousel-dot" data-carousel-dot="2" aria-label="Trang cuộn 3"></button>
+        </div>
+    </section>
+}

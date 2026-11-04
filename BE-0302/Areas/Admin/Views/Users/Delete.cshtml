@@ -1,0 +1,14 @@
+﻿@model BE_0302.Models.User
+@{ ViewBag.Title = "Xóa tài khoản admin"; }
+<h2 class="page-title bg-success">Xóa tài khoản admin</h2>
+@Html.ValidationSummary(false, "", new { @class = "text-danger" })
+<dl class="dl-horizontal"><dt>Tên đăng nhập</dt><dd>@Model.Username</dd><dt>Vai trò</dt><dd>Quản trị viên</dd></dl>
+
+<p class="alert alert-warning">Bạn có chắc muốn xóa tài khoản này?</p>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+}
+
+<div class="form-actions">@Html.ActionLink("Quay lại danh sách", "Index", null, new { @class = "btn btn-default" })</div>

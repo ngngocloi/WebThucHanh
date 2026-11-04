@@ -1,0 +1,60 @@
+﻿@model BE_0302.Models.ViewModel.HomeProductVM
+@using PagedList.Mvc
+
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/myStyle/CustomerHome.css")" />
+
+@if (Model.NewProducts != null && Model.NewProducts.Any())
+{
+    <section id="newProd" class="container-fluid listProduct">
+        <div class="section-header-bar">
+            <div class="section-title-group">
+                <span class="section-eyebrow"><i class="fas fa-layer-group"></i> DANH MỤC ĐẦY ĐỦ</span>
+                <h2>Sản phẩm mới</h2>
+            </div>
+            <div class="section-meta-right">
+                <a href="#searchProd" class="back-to-filter-link"><i class="fas fa-sliders-h"></i> Lọc theo danh mục</a>
+            </div>
+        </div>
+
+        <ul class="list-container">
+            @foreach (var product in Model.NewProducts)
+            {
+                <li class="lproduct-item">
+                    <div class="prod-img-wrap">
+                        <span class="real-photo-badge"><i class="fas fa-camera"></i> Ảnh thực tế</span>
+                        <a href="@Url.Action("ProductDetails", "Home", new { id = product.ProductID })">
+                            <img src="@Url.Content(product.ImageUrl)"
+                                 alt="@product.ProductName"
+                                 onerror="this.onerror=null;this.src='@Url.Content(product.FallbackImageUrl)';" />
+                        </a>
+                    </div>
+                    <div class="prod-info-wrap">
+                        <p class="prodPrice">@product.ProductPrice.ToString("N0") đ</p>
+                        <p class="prodName">
+                            <a href="@Url.Action("ProductDetails", "Home", new { id = product.ProductID })">
+                                @product.ProductName
+                            </a>
+                        </p>
+                        <p class="prodCate">
+                            <i class="fas fa-folder-open"></i> @(product.Category != null ? product.Category.CategoryName : "Sản phẩm")
+                        </p>
+                        <div class="prod-footer-meta">
+                            <span class="prodSale"><i class="fas fa-check-circle"></i> Đã bán: @product.OrderDetails.Count</span>
+                            <a href="@Url.Action("AddToCart", "Cart", new { id = product.ProductID, quantity = 1 })" class="prod-quick-buy" title="Thêm vào giỏ">
+                                <i class="fas fa-cart-plus"></i> Chọn mua
+                            </a>
+                        </div>
+                    </div>
+                </li>
+            }
+        </ul>
+    </section>
+
+    <div class="pagination-container">
+        @Html.PagedListPager(Model.NewProducts, page => Url.Action("Index", new { page, searchTerm = Model.SearchTerm, categoryId = ViewBag.CategoryID }))
+    </div>
+}
+else
+{
+    <div class="alert alert-info text-center">Không tìm được sản phẩm nào phù hợp.</div>
+}

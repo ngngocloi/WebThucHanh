@@ -1,0 +1,55 @@
+﻿@model IEnumerable<BE_0302.Models.Category>
+@{
+    var currentAction = (ViewContext.RouteData.Values["action"] ?? "").ToString();
+    var currentController = (ViewContext.RouteData.Values["controller"] ?? "").ToString();
+    var routeId = Request.QueryString["categoryId"] ?? (ViewContext.RouteData.Values["id"] ?? "").ToString();
+    bool isCategoryActive = string.Equals(currentController, "Home", StringComparison.OrdinalIgnoreCase)
+                            && (string.Equals(currentAction, "ProductList", StringComparison.OrdinalIgnoreCase) || !string.IsNullOrEmpty(routeId));
+}
+
+@if (Model != null && Model.Any())
+{
+    <ul class="nav navbar-nav nav-menu-left">
+        <li class="nav-dropdown @(isCategoryActive ? "active-nav-item" : "")" id="category-nav-dropdown">
+            <a href="javascript:void(0)" class="nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+                <span class="menu-icon-badge"><i class="fas fa-th-large"></i></span>
+                <span>Danh mục sản phẩm</span>
+                <i class="fas fa-chevron-down nav-caret"></i>
+            </a>
+            <div class="nav-dropdown-menu" role="menu">
+                <div class="nav-dropdown-header">
+                    <i class="fas fa-compass"></i> KHÁM PHÁ DANH MỤC
+                </div>
+                <a href="@Url.Action("ProductList", "Home", new { id = (int?)null })" class="nav-dropdown-item @(string.Equals(currentAction, "ProductList", StringComparison.OrdinalIgnoreCase) && string.IsNullOrEmpty(routeId) ? "is-selected" : "")">
+                    <span class="item-icon"><i class="fas fa-border-all"></i></span>
+                    <span class="item-label">Tất cả sản phẩm</span>
+                    <span class="item-badge">Mới</span>
+                </a>
+                <div class="nav-dropdown-divider"></div>
+                @foreach (var cat in Model)
+                {
+                    string catLower = (cat.CategoryName ?? "").ToLowerInvariant();
+                    string iconClass = "fa-box";
+                    if (catLower.Contains("công nghệ") || catLower.Contains("điện thoại") || catLower.Contains("laptop"))
+                    {
+                        iconClass = "fa-laptop-code";
+                    }
+                    else if (catLower.Contains("sách") || catLower.Contains("lập trình"))
+                    {
+                        iconClass = "fa-book-open";
+                    }
+                    else if (catLower.Contains("âm thanh") || catLower.Contains("phụ kiện") || catLower.Contains("tai nghe"))
+                    {
+                        iconClass = "fa-headphones-alt";
+                    }
+                    bool isSelected = routeId == cat.CategoryID.ToString();
+                    <a href="@Url.Action("ProductList", "Home", new { id = cat.CategoryID })" class="nav-dropdown-item @(isSelected ? "is-selected" : "")">
+                        <span class="item-icon"><i class="fas @iconClass"></i></span>
+                        <span class="item-label">@cat.CategoryName</span>
+                        <i class="fas fa-chevron-right item-arrow"></i>
+                    </a>
+                }
+            </div>
+        </li>
+    </ul>
+}

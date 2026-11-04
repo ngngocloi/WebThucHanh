@@ -1,0 +1,35 @@
+﻿@model BE_0302.Models.ViewModel.Cart
+@using PagedList.Mvc
+@using PagedList
+
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/myStyle/CustomerHome.css")" />
+
+@if (Model.SimilarProducts != null && Model.SimilarProducts.Any())
+{
+    <section class="listProduct">
+        <h2>Sản phẩm tương tự</h2>
+        <ul class="list-container">
+            @foreach (var product in Model.SimilarProducts)
+            {
+                <li class="lproduct-item">
+                    <div>
+                        <a href="@Url.Action("ProductDetails", "Home", new { id = product.ProductID })">
+                            <img src="@Url.Content(product.ImageUrl)" alt="@product.ProductName" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/default-product.svg")';" />
+                        </a>
+                    </div>
+                    <div class="prodName">@product.ProductName</div>
+                    <div class="prodPrice">@product.ProductPrice.ToString("N0") đ</div>
+                    <div style="margin-top:8px;">
+                        @Html.ActionLink("Thêm vào giỏ hàng", "AddToCart", "Cart",
+                            new { id = product.ProductID },
+                            new { @class = "btn btn-info btn-sm btn-block" })
+                    </div>
+                </li>
+            }
+        </ul>
+    </section>
+
+    <div class="pagination-container">
+        @Html.PagedListPager(Model.SimilarProducts, page => Url.Action("Index2", new { page }))
+    </div>
+}

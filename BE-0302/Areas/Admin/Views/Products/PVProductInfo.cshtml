@@ -1,0 +1,11 @@
+﻿@model BE_0302.Models.Product
+<div class="row bg-info product-info">
+    <div class="col-sm-4"><img class="product-preview" src="@Url.Content(Model.ImageUrl)" alt="@Model.ProductName" onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/sample-product-1.jpg")';" /></div>
+    <div class="col-sm-8"><dl class="dl-horizontal">
+        <dt>Mã sản phẩm</dt><dd>@Model.ProductID</dd>
+        <dt>Tên sản phẩm</dt><dd>@Model.ProductName</dd>
+        <dt>Mô tả</dt><dd>@Model.ProductDescription</dd>
+        <dt>Đơn giá</dt><dd>@Model.ProductPrice.ToString("N0") đ</dd>
+        <dt>Danh mục</dt><dd>@(Model.Category == null ? "" : Model.Category.CategoryName)</dd>
+    </dl></div>
+</div>

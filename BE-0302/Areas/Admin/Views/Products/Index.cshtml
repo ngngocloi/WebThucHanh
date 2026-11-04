@@ -1,0 +1,24 @@
+﻿@model BE_0302.Models.ViewModel.ProductSearchVM
+@{ ViewBag.Title = "Danh sách sản phẩm"; }
+<h2 class="page-title bg-success">DANH SÁCH SẢN PHẨM</h2>
+@using (Html.BeginForm("Index", "Products", FormMethod.Get, new { @class = "search-form" }))
+{
+    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+    <div class="row">
+        <div class="col-md-4 form-group"><label for="Keyword">Từ khóa</label>
+            @Html.TextBoxFor(m => m.Keyword, new { @class = "form-control", placeholder = "Tên, mô tả hoặc danh mục" })</div>
+        <div class="col-md-2 form-group"><label for="MinPrice">Giá tối thiểu</label>
+            @Html.TextBoxFor(m => m.MinPrice, new { @class = "form-control", type = "number", min = "0", step = "0.01" })</div>
+        <div class="col-md-2 form-group"><label for="MaxPrice">Giá tối đa</label>
+            @Html.TextBoxFor(m => m.MaxPrice, new { @class = "form-control", type = "number", min = "0", step = "0.01" })</div>
+        <div class="col-md-4 form-group"><label for="SortOrder">Sắp xếp</label>
+            @Html.DropDownListFor(m => m.SortOrder, new SelectList(new[] {
+                new { Value = "name_asc", Text = "Tên tăng dần" }, new { Value = "name_desc", Text = "Tên giảm dần" },
+                new { Value = "price_asc", Text = "Giá tăng dần" }, new { Value = "price_desc", Text = "Giá giảm dần" }
+            }, "Value", "Text"), new { @class = "form-control" })</div>
+    </div>
+    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+    @Html.ActionLink("Đặt lại", "Index", null, new { @class = "btn btn-default" })
+}
+@Html.Partial("PVListProduct", Model)
+@Html.ActionLink("Thêm mới", "Create", null, new { @class = "btn btn-primary" })

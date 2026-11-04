@@ -1,0 +1,12 @@
+﻿@model BE_0302.Models.ViewModel.AdminUserVM
+@{ ViewBag.Title = "Cập nhật tài khoản admin"; ViewBag.IsEdit = true; }
+<h2 class="page-title bg-success">Cập nhật tài khoản admin</h2>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+    @Html.Partial("PVCreateEdit", Model)
+    <button type="submit" class="btn btn-primary">Lưu</button>
+    @Html.ActionLink("Quay lại danh sách", "Index", null, new { @class = "btn btn-default" })
+}
+@section scripts { @Scripts.Render("~/bundles/jqueryval") }
