@@ -163,7 +163,7 @@
     {
         <div class="col-md-8">
             <div class="cart-section">
-                <!-- Gom nhóm nâng cao: Dùng IGrouping nhóm theo tên danh mục (Slide 09) -->
+
                 @foreach (var categoryGroup in Model.GroupedItems)
                 {
                     <div class="cart-group-header">
@@ -252,7 +252,6 @@
     }
 </div>
 
-<!-- Sản phẩm tương tự: Lọc SimilarProducts cùng danh mục chưa có trong giỏ (Slide 09) -->
 @if (Model != null && Model.SimilarProducts != null && Model.SimilarProducts.Any())
 {
     <div class="cart-section" style="margin-top:20px;">

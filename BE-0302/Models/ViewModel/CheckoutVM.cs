@@ -6,7 +6,7 @@ using System.Web;
 
 namespace BE_0302.Models.ViewModel
 {
-    public class CheckoutVM /*Lưu thông tin form Checkout*/
+    public class CheckoutVM
     {
         public List<CartItem> CartItems { get; set; }
 
@@ -35,7 +35,6 @@ namespace BE_0302.Models.ViewModel
 
         public string Username { get; set; }
 
-        // Các thuộc tính khác của đơn hàng
         public List<OrderDetail> OrderDetails { get; set; }
     }
 }

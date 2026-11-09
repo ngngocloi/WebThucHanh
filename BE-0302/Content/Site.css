@@ -1,4 +1,4 @@
-html {
+ï»¿html {
     scroll-behavior: smooth;
     scroll-padding-top: 118px;
 }
@@ -21,9 +21,6 @@ body {
     white-space: normal;
 }
 
-/* =========================================================
-   1. HEADER C? Ð?NH, THANH TI?N TRÌNH CU?N & MENU CH?N M?I
-   ========================================================= */
 .customer-fixed-header {
     position: fixed;
     top: 0;
@@ -124,7 +121,6 @@ body {
     box-shadow: 0 4px 10px rgba(185, 28, 28, 0.28);
 }
 
-/* Menu Items & Active Selection */
 .customer-navbar .navbar-nav > li > a {
     color: #334155 !important;
     font-weight: 600;
@@ -170,7 +166,6 @@ body {
     font-size: 12px;
 }
 
-/* Section Quick Scroller Links */
 .nav-section-scroller > li > a {
     font-size: 13.5px !important;
     color: #475569 !important;
@@ -180,7 +175,6 @@ body {
     color: #ea580c;
 }
 
-/* Unified Modern Dropdown (Danh m?c & Tài kho?n) */
 .nav-dropdown {
     position: relative;
 }
@@ -311,7 +305,6 @@ body {
     color: #e11d48 !important;
 }
 
-/* Cart Button Pill */
 .cart-nav-btn {
     background-color: #fff1f2 !important;
     border: 1px solid #fecdd3;
@@ -329,9 +322,6 @@ body {
     margin-left: 2px;
 }
 
-/* =========================================================
-   2. NÚT CU?N LÊN Ð?U TRANG (FLOATING BACK TO TOP)
-   ========================================================= */
 .back-to-top-btn {
     position: fixed;
     right: 24px;
@@ -366,7 +356,6 @@ body {
     transform: translateY(-2px);
 }
 
-/* Site Footer */
 .site-footer {
     background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
     color: #cbd5e1;
@@ -385,7 +374,6 @@ body {
     line-height: 1.65;
 }
 
-/* Card & Form Polish */
 .auth-card, .content-card {
     background: #ffffff;
     border: 1px solid #e2e8f0;

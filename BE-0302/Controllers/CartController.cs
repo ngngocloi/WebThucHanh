@@ -13,7 +13,6 @@ namespace BE_0302.Controllers
     {
         private MyStoreEntities db = new MyStoreEntities();
 
-        // Hàm lấy dịch vụ giỏ hàng
         private CartService GetCartService()
         {
             return new CartService(Session);
@@ -36,7 +35,6 @@ namespace BE_0302.Controllers
             cart.SimilarProducts = similarProducts.OrderBy(p => p.ProductID).ToPagedList(pageNumber, pageSize);
         }
 
-        // Hiển thị giỏ hàng không gom nhóm theo danh mục
         public ActionResult Index(int? page)
         {
             var cart = GetCartService().GetCart();
@@ -44,7 +42,6 @@ namespace BE_0302.Controllers
             return View(cart);
         }
 
-        // Hiển thị giỏ hàng đã gom nhóm sản phẩm theo danh mục (Giỏ hàng nâng cao)
         public ActionResult Index2(int? page)
         {
             var cart = GetCartService().GetCart();
@@ -52,7 +49,6 @@ namespace BE_0302.Controllers
             return View(cart);
         }
 
-        // Thêm sản phẩm vào giỏ
         public ActionResult AddToCart(int id, int quantity = 1)
         {
             var product = db.Products.Find(id);
@@ -71,13 +67,11 @@ namespace BE_0302.Controllers
             return RedirectToAction("Index");
         }
 
-        // Alias hỗ trợ tên Action AddItem trong slide tổng quan
         public ActionResult AddItem(int id, int quantity = 1)
         {
             return AddToCart(id, quantity);
         }
 
-        // Xóa sản phẩm khỏi giỏ
         public ActionResult RemoveFromCart(int id)
         {
             var cartService = GetCartService();
@@ -85,13 +79,11 @@ namespace BE_0302.Controllers
             return RedirectToAction("Index");
         }
 
-        // Alias hỗ trợ tên Action RemoveItem
         public ActionResult RemoveItem(int id)
         {
             return RemoveFromCart(id);
         }
 
-        // Làm trống giỏ hàng
         public ActionResult ClearCart()
         {
             GetCartService().ClearCart();

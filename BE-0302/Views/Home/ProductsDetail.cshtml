@@ -41,13 +41,13 @@
 
 <div class="container-fluid pro">
     <div class="div-horizontal row">
-        @* Khối bên trái *@
-        <div class="col-md-3 pro-section">@* Ảnh sản phẩm *@
+
+        <div class="col-md-3 pro-section">
             <img src="@Model.product.ProductImage" alt="@Model.product.ProductName" />
         </div>
-        @* Khối ở giữa *@
+
         <div class="col-md-5 pro-section">
-            @* Phần thông tin sản phẩm *@
+
             <div>
                 <h4><strong>@Html.DisplayFor(model => model.product.ProductName)</strong></h4>
                 <p class="pro-sale">Đã bán:&nbsp; @Model.product.OrderDetails.Count</p>
@@ -59,12 +59,11 @@
             </div>
             <hr />
 
-            @* Khối Related Product *@
             <div>@Html.Partial("_PVRelatedProduct", Model)</div>
         </div>
-        @* Khối bên phải *@
+
         <div class="col-md-3 pro-section">
-            <div class="form-group">@* Phần tạm tính *@
+            <div class="form-group">
                 @using (Html.BeginForm("ProductDetails", "Home", FormMethod.Get))
                 {
                     <input type="hidden" name="id" value="@Model.product.ProductID" />
@@ -90,7 +89,7 @@
                 }
                 <hr />
             </div>
-            @* Khối TopProduct *@
+
             <div>@Html.Partial("_PVTopProduct", Model)</div>
         </div>
     </div>

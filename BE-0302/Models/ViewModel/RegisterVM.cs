@@ -6,7 +6,7 @@ using System.Web;
 
 namespace BE_0302.Models.ViewModel
 {
-    public class RegisterVM /*Lưu thông tin form đăng ký tài khoản khách hàng*/
+    public class RegisterVM
     {
         [Required(ErrorMessage = "Vui lòng nhập tên đăng nhập")]
         [Display(Name = "Tên đăng nhập")]

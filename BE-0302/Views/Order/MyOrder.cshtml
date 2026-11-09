@@ -11,7 +11,6 @@
         <i class="fas fa-history text-primary"></i> ĐƠN HÀNG CỦA TÔI
     </h2>
 
-    @* Các tab phân loại đơn hàng theo trạng thái *@
     <ul class="nav nav-tabs" style="margin-bottom:20px; font-weight:600;">
         @foreach (var tab in tabs)
         {
@@ -21,7 +20,6 @@
         }
     </ul>
 
-    @* Phần Tìm kiếm đơn hàng theo Mã đơn hàng hoặc Tên sản phẩm *@
     @using (Html.BeginForm("MyOrder", "Order", FormMethod.Get, new { @class = "form-inline", style = "margin-bottom:24px;" }))
     {
         <input type="hidden" name="status" value="@currentStatus" />

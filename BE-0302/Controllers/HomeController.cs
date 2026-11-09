@@ -58,11 +58,10 @@ namespace BE_0302.Controllers
             }
             catch
             {
-                // Bỏ qua nếu CSDL đang ở chế độ chỉ đọc
+
             }
         }
 
-        // GET: Home/Index
         public ActionResult Index(string searchTerm, int? page, int? categoryId)
         {
             EnsureSampleProductImages();
@@ -79,7 +78,6 @@ namespace BE_0302.Controllers
                 ViewBag.CategoryName = selectedCat != null ? selectedCat.CategoryName : null;
             }
 
-            // Tìm kiếm sản phẩm dựa trên từ khóa
             if (!string.IsNullOrEmpty(searchTerm))
             {
                 model.SearchTerm = searchTerm;
@@ -88,20 +86,16 @@ namespace BE_0302.Controllers
                                                p.Category.CategoryName.Contains(searchTerm));
             }
 
-            // Đoạn code liên quan tới phân trang
             int pageNumber = page ?? 1;
             int pageSize = 6;
 
-            // Lấy top 10 sản phẩm bán chạy nhất
             model.FeaturedProducts = products.OrderByDescending(p => p.OrderDetails.Count()).Take(10).ToList();
 
-            // Lấy 20 sản phẩm và phân trang
             model.NewProducts = products.OrderBy(p => p.OrderDetails.Count()).Take(20).ToPagedList(pageNumber, pageSize);
 
             return View(model);
         }
 
-        // GET: Home/ProductList
         public ActionResult ProductList(int? id, string searchTerm, int? page)
         {
             EnsureSampleProductImages();
@@ -135,7 +129,6 @@ namespace BE_0302.Controllers
             return View(model);
         }
 
-        // GET: Home/ProductDetails/5
         public ActionResult ProductDetails(int? id, int? quantity, int? page)
         {
             if (id == null)
@@ -167,7 +160,6 @@ namespace BE_0302.Controllers
             return View("ProductDetails", model);
         }
 
-        // Alias hỗ trợ đường dẫn ProductDetail
         public ActionResult ProductDetail(int? id, int? quantity, int? page)
         {
             return ProductDetails(id, quantity, page);

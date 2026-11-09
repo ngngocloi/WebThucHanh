@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
@@ -15,7 +15,6 @@ namespace BE_0302.Controllers
     {
         private MyStoreEntities db = new MyStoreEntities();
 
-        // Bước 2: Cấu hình API Context từ Web.config
         private APIContext GetAPIContext()
         {
             string clientId = ConfigurationManager.AppSettings["PayPalClientId"] ?? "sandbox-client-id";
@@ -33,10 +32,9 @@ namespace BE_0302.Controllers
             return new APIContext(accessToken) { Config = config };
         }
 
-        // Bước 3: Tạo Phiếu - Gọi CreatePayment lấy liên kết duyệt thanh toán
         private Payment CreatePayment(APIContext apiContext, string redirectUrl, decimal totalVnd, List<CartItem> cartItems)
         {
-            // Chuyển đổi VND sang USD cho cổng thanh toán quốc tế PayPal (tỷ giá ước tính 25,000 VND / USD)
+
             decimal totalUsd = Math.Round(totalVnd / 25000m, 2);
             if (totalUsd < 0.01m) totalUsd = 1.00m;
 
@@ -55,7 +53,6 @@ namespace BE_0302.Controllers
                 });
             }
 
-            // Tính tổng giá trị items
             decimal subtotalUsd = itemList.items.Sum(i => decimal.Parse(i.price, CultureInfo.InvariantCulture) * int.Parse(i.quantity));
 
             var payer = new Payer() { payment_method = "paypal" };
@@ -102,7 +99,6 @@ namespace BE_0302.Controllers
             return payment.Create(apiContext);
         }
 
-        // Bước 4: Thực thi giao dịch - Hàm ExecutePayment xác nhận giao dịch khi khách duyệt
         private Payment ExecutePayment(APIContext apiContext, string payerId, string paymentId)
         {
             var paymentExecution = new PaymentExecution() { payer_id = payerId };
@@ -110,7 +106,6 @@ namespace BE_0302.Controllers
             return payment.Execute(apiContext, paymentExecution);
         }
 
-        // Action cốt lõi: PaymentWithPaypal
         public ActionResult PaymentWithPaypal(CheckoutVM model, string Cancel, string PayerID, string paymentId)
         {
             try
@@ -134,7 +129,6 @@ namespace BE_0302.Controllers
                     return RedirectToAction("Login", "Account");
                 }
 
-                // Nếu PayPal redirect về đã có PayerID (thực thi thanh toán)
                 if (!string.IsNullOrEmpty(PayerID) && !string.IsNullOrEmpty(paymentId))
                 {
                     try
@@ -148,16 +142,14 @@ namespace BE_0302.Controllers
                     }
                     catch
                     {
-                        // Khi chạy sandbox/demo offline không kết nối được cổng PayPal thật, vẫn hỗ trợ hoàn tất đơn
+
                     }
 
-                    // Lưu đơn hàng thành công vào CSDL
                     var savedOrder = CreateDbOrder(customer, cart, model, "Đã thanh toán (PayPal)");
                     Session["Cart"] = null;
                     return RedirectToAction("OrderSuccess", "Order", new { id = savedOrder.OrderID });
                 }
 
-                // Luồng khởi tạo phiếu thanh toán: thử gọi PayPal SDK
                 try
                 {
                     var apiContext = GetAPIContext();
@@ -182,8 +174,7 @@ namespace BE_0302.Controllers
                 }
                 catch
                 {
-                    // Dự phòng cho môi trường offline / demo thực hành:
-                    // Lưu đơn hàng trực tiếp với trạng thái Thanh toán PayPal
+
                     var order = CreateDbOrder(customer, cart, model, "Thanh toán PayPal (Sandbox Demo)");
                     Session["Cart"] = null;
                     return RedirectToAction("OrderSuccess", "Order", new { id = order.OrderID });

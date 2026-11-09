@@ -6,7 +6,6 @@
 }
 <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/myStyle/CustomerHome.css")" />
 
-@* PHẦN BANNER *@
 <section id="topBanner" class="container-fluid banner">
     <div class="banner-container">
         <span class="banner-pill"><i class="fas fa-bolt"></i> SIÊU SALE CÔNG NGHỆ &amp; SÁCH LẬP TRÌNH</span>
@@ -19,7 +18,6 @@
     </div>
 </section>
 
-@* PHẦN TÌM KIẾM & CHỌN NHANH DANH MỤC (CATEGORY PILLS) *@
 <section id="searchProd" class="container-fluid searchProd">
     <h2><i class="fas fa-compass"></i> Tìm kiếm &amp; Chọn nhanh Danh mục</h2>
     @using (Html.BeginForm("Index", "Home", FormMethod.Get))
@@ -64,8 +62,6 @@
     }
 </section>
 
-@* PHẦN SẢN PHẨM NỔI BẬT *@
 @Html.Partial("_PVFeatureProduct", Model)
 
-@* PHẦN SẢN PHẨM MỚI *@
 @Html.Partial("_PVNewProduct", Model)

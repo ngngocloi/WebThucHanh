@@ -16,7 +16,6 @@ namespace BE_0302.Models.ViewModel
 
         public string ImageUrl => SampleImageHelper.Resolve(ProductID, ProductName, ProductImage);
 
-        // Tổng giá cho mỗi sản phẩm
         public decimal TotalPrice => Quantity * UnitPrice;
     }
 }

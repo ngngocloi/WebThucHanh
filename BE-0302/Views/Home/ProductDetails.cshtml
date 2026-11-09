@@ -8,7 +8,7 @@
 <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/myStyle/CustomerDetailsProduct.css")" />
 
 <div class="container-fluid pro-detail-wrapper">
-    <!-- Breadcrumb điều hướng -->
+
     <ol class="breadcrumb detail-breadcrumb">
         <li><a href="@Url.Action("Index", "Home")"><i class="fas fa-home"></i> Trang chủ</a></li>
         @if (Model.product != null && Model.product.Category != null)
@@ -19,7 +19,7 @@
     </ol>
 
     <div class="row">
-        <!-- CỘT 1: KHỐI THÔNG TIN (Ảnh lớn kèm mô tả) -->
+
         <div class="col-md-5 col-sm-12">
             <div class="detail-card info-card">
                 <div class="detail-main-img-wrap">
@@ -58,7 +58,6 @@
             </div>
         </div>
 
-        <!-- CỘT 2: KHỐI TẠM TÍNH (Nhân số lượng trực tiếp đơn giá) -->
         <div class="col-md-3 col-sm-12">
             <div class="detail-card calc-card sticky-calc-card">
                 <div class="calc-card-header">
@@ -131,7 +130,6 @@
             </div>
         </div>
 
-        <!-- CỘT 3: KHỐI GỢI Ý (Nạp hai khung Partial View con: SP cùng loại & SP bán chạy) -->
         <div class="col-md-4 col-sm-12">
             <div class="detail-card suggest-card">
                 <div class="suggest-header">
@@ -139,7 +137,6 @@
                     <p class="suggest-subtitle">Nạp hai khung Partial View chuyên biệt</p>
                 </div>
 
-                <!-- Khung gợi ý 1: Sản phẩm cùng loại (Partial View con) -->
                 <div class="suggest-partial-section">
                     <div class="suggest-subhead">
                         <span class="suggest-badge blue-badge"><i class="fas fa-tags"></i> CÙNG LOẠI</span>
@@ -150,7 +147,6 @@
 
                 <hr class="suggest-divider" />
 
-                <!-- Khung gợi ý 2: Sản phẩm bán chạy (Partial View con) -->
                 <div class="suggest-partial-section">
                     <div class="suggest-subhead">
                         <span class="suggest-badge red-badge"><i class="fas fa-fire"></i> BÁN CHẠY NHẤT</span>

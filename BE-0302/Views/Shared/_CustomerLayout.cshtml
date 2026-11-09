@@ -30,21 +30,19 @@
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 
-    <!-- Google Fonts hỗ trợ tiếng Việt chuẩn Unicode: Be Vietnam Pro & Roboto -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
 </head>
 <body id="page-top">
-    <!-- KHỐI ĐẦU TRANG & THANH ĐIỀU HƯỚNG CỐ ĐỊNH (SLIDE 04) -->
+
     <div class="customer-fixed-header" id="mainFixedHeader">
-        <!-- Thanh tiến trình cuộn trang mượt mà -->
+
         <div class="scroll-progress-track">
             <div class="scroll-progress-bar" id="scrollProgressBar"></div>
         </div>
 
-        <!-- Biểu ngữ quảng cáo tĩnh (Khối Đầu Trang theo Slide 04) -->
         <div class="topbar-promo">
             <div class="container topbar-inner">
                 <div>
@@ -74,7 +72,7 @@
                 </div>
 
                 <div class="navbar-collapse collapse" id="customer-navbar-collapse">
-                    <!-- MENU DANH MỤC: TÁCH RIÊNG TỆP _CategoriesPV.cshtml (SLIDE 04) -->
+
                     @Html.Action("CategoryMenu", "Home")
 
                     @if (isHomePage)
@@ -98,7 +96,6 @@
                         </ul>
                     }
 
-                    <!-- MENU CÁ NHÂN: KIỂM SOÁT TRẠNG THÁI QUA PersonalMenuVM (SLIDE 04) -->
                     <ul class="nav navbar-nav navbar-right nav-menu-right">
                         <li class="@(isHomePage ? "active-nav-item" : "")">
                             <a href="@Url.Action("Index", "Home")">
@@ -166,11 +163,9 @@
         </nav>
     </div>
 
-    <!-- KHỐI NỘI DUNG CHÍNH CỦA TRANG -->
     <div class="container body-content">
         @RenderBody()
 
-        <!-- KHỐI CHÂN TRANG: HIỂN THỊ THÔNG TIN NHÓM PHÁT TRIỂN (SLIDE 04) -->
         <footer class="site-footer">
             <div class="row">
                 <div class="col-md-6 col-sm-12">
@@ -187,7 +182,6 @@
         </footer>
     </div>
 
-    <!-- Nút nổi Cuộn lên đầu trang (Back to Top) -->
     <button type="button" id="backToTopBtn" class="back-to-top-btn" title="Cuộn lên đầu trang" aria-label="Cuộn lên đầu trang">
         <i class="fas fa-arrow-up"></i>
         <span>Đầu trang</span>
@@ -197,7 +191,6 @@
     @Scripts.Render("~/bundles/bootstrap")
     <script>
         (function () {
-            // 1. Hỗ trợ đóng/mở Menu Dropdown
             var dropdowns = document.querySelectorAll('.nav-dropdown');
             dropdowns.forEach(function (dd) {
                 var toggle = dd.querySelector('.nav-dropdown-toggle');
@@ -215,7 +208,6 @@
                 dropdowns.forEach(function (dd) { dd.classList.remove('open'); });
             });
 
-            // 2. Xử lý Cuộn trang: Thanh tiến trình, Sticky Header, ScrollSpy & Back-to-Top
             var header = document.getElementById('mainFixedHeader');
             var progressBar = document.getElementById('scrollProgressBar');
             var backToTopBtn = document.getElementById('backToTopBtn');
@@ -238,7 +230,6 @@
                     else backToTopBtn.classList.remove('is-visible');
                 }
 
-                // ScrollSpy đánh dấu phân khu đang xem trên menu
                 if (spyLinks.length > 0) {
                     var currentSection = '';
                     ['searchProd', 'featureProd', 'newProd'].forEach(function (id) {
@@ -266,7 +257,6 @@
                 });
             }
 
-            // 3. Điều khiển Cuộn ngang mượt mà cho Carousel Sản phẩm nổi bật
             var carousels = document.querySelectorAll('[data-carousel-container]');
             carousels.forEach(function (wrap) {
                 var track = wrap.querySelector('.feature-container');
@@ -307,7 +297,6 @@
 
                 track.addEventListener('scroll', updateDots, { passive: true });
 
-                // Hỗ trợ kéo chuột (Drag-to-scroll) trên máy tính
                 var isDown = false, startX = 0, scrollLeftStart = 0;
                 track.addEventListener('mousedown', function (e) {
                     isDown = true;

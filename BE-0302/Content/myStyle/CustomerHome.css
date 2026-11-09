@@ -1,7 +1,4 @@
-﻿/* =========================================================
-   1. BANNER & CUỘN MƯỢT TỚI CÁC PHÂN KHU
-   ========================================================= */
-#topBanner, #searchProd, #featureProd, #newProd {
+﻿#topBanner, #searchProd, #featureProd, #newProd {
     scroll-margin-top: 118px;
 }
 
@@ -102,9 +99,6 @@
     transform: translateY(-2px);
 }
 
-/* =========================================================
-   2. KHỐI TÌM KIẾM & THANH CHỌN NHANH DANH MỤC (PILL TABS)
-   ========================================================= */
 .searchProd {
     text-align: center;
     background: #ffffff;
@@ -164,7 +158,6 @@
     opacity: 0.92;
 }
 
-/* Thanh Pill Chọn Nhanh Danh Mục */
 .category-pills-bar {
     display: flex;
     align-items: center;
@@ -216,9 +209,6 @@
     color: #ffffff;
 }
 
-/* =========================================================
-   3. CAROUSEL CUỘN NGANG MƯỢT MÀ (ẨN SCROLLBAR THÔ) & LƯỚI SP
-   ========================================================= */
 .featureProd, .listProduct {
     text-align: left;
     margin-bottom: 28px;
@@ -325,7 +315,6 @@
     color: #ffffff;
 }
 
-/* Ẩn hoàn toàn thanh cuộn ngang mặc định của trình duyệt */
 .feature-container {
     display: flex;
     overflow-x: auto;
@@ -374,7 +363,6 @@
     background-color: #dc2626;
 }
 
-/* Thẻ sản phẩm & Ảnh thực tế */
 .fproduct-item {
     width: 215px;
     flex: 0 0 215px;

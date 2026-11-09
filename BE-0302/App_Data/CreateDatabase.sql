@@ -64,7 +64,6 @@ CREATE TABLE dbo.OrderDetail (
 );
 GO
 
--- Thêm dữ liệu mẫu kèm hình ảnh thực tế từ Wikimedia Commons nếu bảng đang trống
 IF NOT EXISTS (SELECT 1 FROM dbo.Category)
 BEGIN
     INSERT INTO dbo.Category (CategoryName) VALUES
