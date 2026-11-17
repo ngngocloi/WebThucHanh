@@ -42,7 +42,7 @@ namespace BE_0302.Models
                 return 3;
             if (name.Contains("đồng hồ") || name.Contains("watch") || name.Contains("garmin") || name.Contains("vòng đeo"))
                 return 4;
-            if (name.Contains("asp.net") || name.Contains("mvc") || name.Contains("c#") || name.Contains("web") || name.Contains("lập trình") || name.Contains("clean architecture"))
+            if (name.Contains("asp.net") || name.Contains("mvc") || name.Contains("c#") || name.Contains("web") || name.Contains("lập trình web") || name.Contains("clean architecture"))
                 return 5;
             if (name.Contains("sql") || name.Contains("cơ sở dữ liệu") || name.Contains("database") || name.Contains("sách") || name.Contains("giáo trình"))
                 return 6;
@@ -144,7 +144,7 @@ namespace BE_0302.Models
         [Display(Name = "Mô tả")]
         public string ProductDescription { get; set; }
 
-        [Range(typeof(decimal), "0", "9999999999999999.99", ErrorMessage = "Đơn giá phải từ 0 đến 9.999.999.999.999.999,99.")]
+        [Range(typeof(decimal), "0", "1000000000.00", ErrorMessage = "Đơn giá phải từ 0 đến 1.000.000.000,00")]
         [Display(Name = "Đơn giá")]
         public decimal ProductPrice { get; set; }
     }

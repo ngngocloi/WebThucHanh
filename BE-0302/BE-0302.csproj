@@ -193,6 +193,31 @@
     <Compile Include="Models\ViewModel\RegisterVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="Areas\Admin\Views\Shared\_Layout.cshtml" />
+    <Content Include="Content\images\products\airpods-max.jpg" />
+    <Content Include="Content\images\products\anker-gan-prime.jpg" />
+    <Content Include="Content\images\products\apple-watch-ultra-2.jpg" />
+    <Content Include="Content\images\products\asus-rog.jpg" />
+    <Content Include="Content\images\products\dell-ultrasharp.jpg" />
+    <Content Include="Content\images\products\dell-xps-15.jpg" />
+    <Content Include="Content\images\products\garmin-epix-pro.jpg" />
+    <Content Include="Content\images\products\ipad-air-m2.jpg" />
+    <Content Include="Content\images\products\ipad-pro-m4.jpg" />
+    <Content Include="Content\images\products\iphone-15-pro-max.jpg" />
+    <Content Include="Content\images\products\keychron-q1.jpg" />
+    <Content Include="Content\images\products\logitech-mx-master.jpg" />
+    <Content Include="Content\images\products\macbook-pro-16.jpg" />
+    <Content Include="Content\images\products\marshall-stanmore.jpg" />
+    <Content Include="Content\images\products\sach-aspnet-mvc.jpg" />
+    <Content Include="Content\images\products\sach-clean-code.jpg" />
+    <Content Include="Content\images\products\sach-csharp-net.jpg" />
+    <Content Include="Content\images\products\sach-design-patterns.jpg" />
+    <Content Include="Content\images\products\sach-entity-framework.jpg" />
+    <Content Include="Content\images\products\sach-sql-server.jpg" />
+    <Content Include="Content\images\products\samsung-s24-ultra.jpg" />
+    <Content Include="Content\images\products\samsung-t7-ssd.jpg" />
+    <Content Include="Content\images\products\sony-wf1000xm5.jpg" />
+    <Content Include="Content\images\products\sony-wh1000xm5.jpg" />
+    <Content Include="Content\images\products\test.jpg" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\Profile.cshtml" />
     <Content Include="Views\Account\ProfileInfo.cshtml" />
@@ -212,10 +237,10 @@
     <Content Include="Views\Order\OrderHistory.cshtml" />
     <Content Include="Views\Order\OrderSuccess.cshtml" />
     <Content Include="Views\Paypal\FailureView.cshtml" />
+    <Content Include="Views\Shared\PersonalMenuPV.cshtml" />
     <Content Include="Views\Shared\_CategoriesPV.cshtml" />
     <Content Include="Views\Shared\_CustomerLayout.cshtml" />
     <Content Include="Views\Shared\CategoryMenuPV.cshtml" />
-    <Content Include="Views\Shared\PersonalMenuPV.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -304,6 +329,7 @@
     <Content Include="Views\Home\_PVNewProducts.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App_Data\Temp\" />
     <Folder Include="Areas\Admin\Data\" />
     <Folder Include="Images\" />
   </ItemGroup>

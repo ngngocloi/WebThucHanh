@@ -73,7 +73,7 @@
 
                 <div class="navbar-collapse collapse" id="customer-navbar-collapse">
 
-                    @Html.Action("CategoryMenu", "Home")
+                    @Html.Action("CategoryMenu", "Home", new { area = "" })
 
                     @if (isHomePage)
                     {
