@@ -1,7 +1,6 @@
 # BE-0302 – My Store Admin
 
-Bài thực hành ASP.NET MVC5, Entity Framework 6 (Database First), .NET Framework 4.7.2. Phần quản trị được hoàn thiện theo **Web BE Development_p2 Admin site.pptx**.
-
+Bài thực hành ASP.NET MVC5, Entity Framework 6 (Database First), .NET Framework 4.7.2.
 ## Chạy bằng Visual Studio
 
 1. Cài workload **ASP.NET and web development** và .NET Framework 4.7.2 Developer Pack.
@@ -27,7 +26,6 @@ Bài thực hành ASP.NET MVC5, Entity Framework 6 (Database First), .NET Framew
 | Đăng nhập, đăng xuất | Chặn các trang quản trị nếu chưa đăng nhập, đăng xuất bằng POST |
 | Trang Home thống kê | `/Admin`: số danh mục/sản phẩm/khách hàng/đơn hàng, tổng giá trị đơn và Google Pie Chart theo danh mục |
 
-Bảng thống kê vẫn xem được khi Google Charts không tải được hoặc chưa có sản phẩm. Tổng giá trị đơn hàng gồm mọi đơn, không được hiểu là doanh thu đã thanh toán.
 
 ## Lưu ý với database có sẵn
 
@@ -38,15 +36,6 @@ Bảng thống kê vẫn xem được khi Google Charts không tải được ho
 - Chặn xóa danh mục còn sản phẩm, sản phẩm đã xuất hiện trong đơn và tài khoản đang dùng/liên kết. Không xóa dây chuyền lịch sử đơn hàng.
 - Phạm vi bản này là **phần 2: Admin**. Giỏ hàng, thanh toán và các trang Customer trong bảng tổng quan slide 2 thuộc phần Customer, không nằm trong bản sửa quản trị này.
 
-## Kiểm tra đã thực hiện
-
-- Biên dịch toàn bộ mã C# thành công.
-- Phân tích và biên dịch 35 Razor view thành công.
-- 46 kiểm tra với dữ liệu giả lập đã đạt: tìm kiếm theo tên/mô tả/danh mục, khoảng giá, 4 kiểu sắp xếp, phân trang, giữ ảnh cũ, chặn file sai loại/quá dung lượng, khóa ngoại, đăng nhập/đăng xuất, chuyển mật khẩu cũ sang hash, khách hàng, đơn hàng và thống kê.
-- Kiểm tra XML cấu hình, danh sách file trong project và `git diff --check`.
-
-Đây là kiểm tra mã và chức năng với dữ liệu giả lập, chưa phải kiểm thử tích hợp với SQL Server/IIS trên máy người dùng.
-
 ## Kiểm tra khi chạy trên Windows
 
 - Tạo/sửa danh mục; thử bỏ trống tên và xóa danh mục còn sản phẩm.
@@ -54,5 +43,3 @@ Bảng thống kê vẫn xem được khi Google Charts không tải được ho
 - Tạo hơn 10 sản phẩm, lọc theo tên/mô tả/danh mục/khoảng giá, thử cả 4 cách sắp xếp và chuyển trang.
 - Mở chi tiết khách hàng, danh sách đơn của khách hàng, chi tiết đơn và đơn giá tại thời điểm mua.
 - Tạo/sửa/xóa admin; thử xóa tài khoản đang đăng nhập; đăng xuất rồi mở trực tiếp một URL quản trị.
-
-Database thực tế và IIS Express cần được kiểm tra trên máy Windows có SQL Server của bạn. Dự án giữ nguyên nền tảng MVC5/EF6 hiện có.
