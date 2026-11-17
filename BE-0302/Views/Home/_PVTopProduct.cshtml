@@ -1,26 +1,6 @@
-﻿@model BE_0302.Models.ViewModel.ProductDetailsVM
-
-@if (Model.TopProducts != null && Model.TopProducts.Any())
-{
-    <div class="related-prod-grid">
-        @foreach (var item in Model.TopProducts)
-        {
-            <div class="mini-prod-card">
-                <a href="@Url.Action("ProductDetails", "Home", new { id = item.ProductID })" class="mini-prod-thumb">
-                    <img src="@Url.Content(item.ImageUrl)" alt="@item.ProductName" onerror="this.onerror=null;this.src='@Url.Content(item.FallbackImageUrl)';" />
-                </a>
-                <div class="mini-prod-body">
-                    <a href="@Url.Action("ProductDetails", "Home", new { id = item.ProductID })" class="mini-prod-name" title="@item.ProductName">
-                        @item.ProductName
-                    </a>
-                    <div class="mini-prod-price">@item.ProductPrice.ToString("N0") đ</div>
-                    <div class="mini-prod-sale"><i class="fas fa-fire text-danger"></i> Đã bán @item.OrderDetails.Count</div>
-                </div>
-            </div>
-        }
-    </div>
-}
-else
-{
-    <p class="text-muted text-center" style="font-size:12.5px;padding:10px;">Chưa có sản phẩm bán chạy.</p>
-}
+@model BE_0302.Models.ViewModel.ProductDetailsVM
+@using PagedList.Mvc
+@if (Model.TopProducts != null && Model.TopProducts.Count > 0) {
+    <div class="order-product-grid">@foreach (var p in Model.TopProducts) { @Html.Partial("~/Views/Shared/_ProductCard.cshtml", p) }</div>
+    @Html.PagedListPager(Model.TopProducts, page => Url.Action("ProductDetails", new { id = Model.product.ProductID, quantity = Model.quantity, page }))
+} else { <p>Chưa có sản phẩm bán chạy cùng danh mục.</p> }

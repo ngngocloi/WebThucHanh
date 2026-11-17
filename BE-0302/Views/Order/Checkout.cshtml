@@ -1,4 +1,4 @@
-﻿@model BE_0302.Models.ViewModel.CheckoutVM
+@model BE_0302.Models.ViewModel.CheckoutVM
 
 @{
     ViewBag.Title = "Thanh toán & Đặt hàng";
@@ -181,12 +181,12 @@
                     <div class="form-group">
                         <label class="shipping-radio-box">
                             @Html.RadioButtonFor(m => m.ShippingMethod, "Giao hàng nhanh", new { @checked = "checked" })
-                            <strong>Giao hàng nhanh (24h - 48h)</strong>
+                            <strong>Giao hàng nhanh</strong>
                             <span class="pull-right text-success" style="font-weight:700;">MIỄN PHÍ</span>
                         </label>
                         <label class="shipping-radio-box">
                             @Html.RadioButtonFor(m => m.ShippingMethod, "Giao hàng tiết kiệm")
-                            <strong>Giao hàng tiết kiệm (3 - 5 ngày)</strong>
+                            <strong>Giao hàng tiết kiệm</strong>
                             <span class="pull-right text-success" style="font-weight:700;">MIỄN PHÍ</span>
                         </label>
                     </div>
@@ -202,16 +202,11 @@
                         </label>
 
                         <label class="payment-radio-box">
-                            @Html.RadioButtonFor(m => m.PaymentMethod, "Paypal")
+                            @if (BE_0302.Controllers.PaypalController.IsConfigured()) { @Html.RadioButtonFor(m => m.PaymentMethod, "Paypal") } else { <input type="radio" disabled aria-label="PayPal hiện chưa khả dụng" /> }
                             <i class="fab fa-paypal text-primary"></i>
                             <strong>Thanh toán trực tuyến quốc tế PayPal</strong>
+                            @if (BE_0302.Controllers.PaypalController.IsConfigured()) { <small>Tỷ giá: @BE_0302.Controllers.PaypalController.VndPerUsd.ToString("N0") đ/USD. Kiểm tra số tiền USD tại PayPal trước khi xác nhận.</small> }
                             <span class="pull-right"><img src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg" alt="PayPal" style="height:20px;" /></span>
-                        </label>
-
-                        <label class="payment-radio-box">
-                            @Html.RadioButtonFor(m => m.PaymentMethod, "Mua trước trả sau")
-                            <i class="fas fa-calendar-check text-info"></i>
-                            <strong>Mua trước trả sau (Trả góp 0% lãi suất)</strong>
                         </label>
                     </div>
 

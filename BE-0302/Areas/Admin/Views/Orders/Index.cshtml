@@ -1,32 +1,29 @@
-﻿@model BE_0302.Models.ViewModel.OrderSearchVM
+@model BE_0302.Models.ViewModel.OrderSearchVM
+@using BE_0302.Helpers
 @using PagedList.Mvc
-@{ ViewBag.Title = "Quản lý đơn hàng"; }
-<h2 class="page-title bg-success">QUẢN LÝ ĐƠN HÀNG</h2>
-@if (Model.CustomerID.HasValue) { <h4>Khách hàng: @Model.CustomerName (#@Model.CustomerID)</h4> }
-@using (Html.BeginForm("Index", "Orders", FormMethod.Get, new { @class = "search-form form-inline" }))
-{
+@{ ViewBag.Title = "Danh sách đơn hàng"; }
+@using (Html.BeginForm("Index", "Orders", FormMethod.Get, new { @class = "search-form order-filters" })) {
     if (Model.CustomerID.HasValue) { @Html.HiddenFor(m => m.CustomerID) }
-    <label for="Keyword">Từ khóa</label>
-    @Html.TextBoxFor(m => m.Keyword, new { @class = "form-control", placeholder = "Khách hàng, tài khoản, trạng thái" })
-    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
-    @Html.ActionLink("Đặt lại", "Index", new { Model.CustomerID }, new { @class = "btn btn-default" })
+    <div><label for="Keyword">Tên khách hàng</label>@Html.TextBoxFor(m => m.Keyword, new { @class = "form-control", placeholder = "Tên hoặc tài khoản", maxlength = 200 })</div>
+    <div><label for="PaymentStatus">Trạng thái thanh toán</label>@Html.DropDownListFor(m => m.PaymentStatus, OrderWorkflow.PaymentOptions(), "Tất cả", new { @class = "form-control" })</div>
+    <div><label for="OrderDate">Ngày đặt hàng</label>@Html.TextBoxFor(m => m.OrderDate, "{0:yyyy-MM-dd}", new { type = "date", @class = "form-control" })</div>
+    <div><label for="SortOrder">Sắp xếp</label>@Html.DropDownListFor(m => m.SortOrder, new[] {
+        new SelectListItem { Value = "date_desc", Text = "Ngày mới nhất" }, new SelectListItem { Value = "date_asc", Text = "Ngày cũ nhất" },
+        new SelectListItem { Value = "customer", Text = "Tên khách hàng A–Z" }, new SelectListItem { Value = "total_asc", Text = "Tổng tiền tăng dần" }, new SelectListItem { Value = "total_desc", Text = "Tổng tiền giảm dần" }
+    }, new { @class = "form-control" })</div>
+    <div class="filter-buttons"><button type="submit" class="btn btn-primary">Tìm kiếm</button><a class="btn btn-default" href="@Url.Action("Index", new { Model.CustomerID })">Đặt lại</a></div>
 }
-<p>Tổng số: @Model.Orders.TotalItemCount đơn hàng.</p>
-<div class="table-responsive"><table class="table admin-table">
-    <thead><tr><th>Mã đơn</th><th>Khách hàng</th><th>Ngày đặt</th><th>Tổng tiền</th><th>Thanh toán</th><th>Thao tác</th></tr></thead><tbody>
-    @foreach (var item in Model.Orders)
-    {
-        <tr><td>@item.OrderID</td><td>@item.Customer.CustomerName</td><td>@item.OrderDate.ToString("dd/MM/yyyy")</td>
-        <td>@item.TotalAmount.ToString("N0") đ</td><td>@item.PaymentStatus</td><td>
-            @Html.ActionLink("Chi tiết", "Details", new { id = item.OrderID }, new { @class = "btn btn-info btn-sm" })
-        </td></tr>
-    }
-    @if (Model.Orders.Count == 0) { <tr><td colspan="6">Chưa có đơn hàng phù hợp.</td></tr> }
-    </tbody>
-</table></div>
-@Html.PagedListPager(Model.Orders, page => Url.Action("Index", new { page, Model.CustomerID, Model.Keyword }))
-@if (Model.CustomerID.HasValue)
-{
-    @Html.ActionLink("Thông tin khách hàng", "Details", "Customers", new { id = Model.CustomerID }, new { @class = "btn btn-default" })
-    @Html.ActionLink("Tất cả đơn hàng", "Index", new { customerID = (int?)null }, new { @class = "btn btn-default" })
+@Html.ValidationSummary(false, "", new { @class = "text-danger" })
+<h1 class="page-title bg-success">DANH SÁCH ĐƠN HÀNG</h1>
+@if (Model.CustomerID.HasValue) { <p>Khách hàng: <strong>@Model.CustomerName</strong></p> }
+<div class="order-count"><span>@Model.Orders.TotalItemCount đơn hàng</span><span>15 đơn hàng / trang</span></div>
+<div class="table-responsive"><table class="table admin-table order-table"><thead><tr><th>Mã đơn</th><th>Ngày đặt hàng</th><th>Tên khách hàng</th><th>Tổng giá trị</th><th>Trạng thái thanh toán</th><th>Phương thức giao hàng</th><th>Trạng thái đơn</th><th></th></tr></thead><tbody>
+@foreach (var order in Model.Orders) {
+    <tr><td>#@order.OrderID</td><td>@order.OrderDate.ToString("dd/MM/yyyy")</td><td>@order.Customer.CustomerName</td>
+    <td class="money">@order.TotalAmount.ToString("N0") đ</td><td>@OrderWorkflow.PaymentLabel(order.PaymentStatus)</td><td>@order.DeliveryMethod</td><td><span class="order-state state-@order.OrderStatus">@OrderWorkflow.Label(order.OrderStatus)</span></td>
+    <td>@Html.ActionLink("Chi tiết đơn hàng", "DetailedOrder", new { id = order.OrderID })</td></tr>
 }
+@if (Model.Orders.Count == 0) { <tr><td colspan="8" class="orders-empty">KHÔNG CÓ</td></tr> }
+</tbody></table></div>
+@Html.PagedListPager(Model.Orders, page => Url.Action("Index", new { page, Model.CustomerID, Model.Keyword, Model.PaymentStatus, orderDate = Model.OrderDate.HasValue ? Model.OrderDate.Value.ToString("yyyy-MM-dd") : "", Model.SortOrder }))
+@if (Model.CustomerID.HasValue) { <a class="btn btn-default" href="@Url.Action("Details", "Customers", new { id = Model.CustomerID })">Thông tin khách hàng</a> }

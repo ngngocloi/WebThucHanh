@@ -1,44 +1,23 @@
-﻿namespace BE_0302.Models
-{
+namespace BE_0302.Models {
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations.Schema;
-
-    public partial class Order
-    {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Order()
-        {
-            this.OrderDetails = new HashSet<OrderDetail>();
-        }
-
+    public partial class Order {
+        public Order() { OrderDetails = new HashSet<OrderDetail>(); }
         public int OrderID { get; set; }
         public int CustomerID { get; set; }
-        public System.DateTime OrderDate { get; set; }
+        public DateTime OrderDate { get; set; }
         public decimal TotalAmount { get; set; }
         public string PaymentStatus { get; set; }
-        public string AddressDelivery { get; set; }
-
-        public virtual Customer Customer { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
-
-        private string _shippingAddress;
-
-        [NotMapped]
+        public string ShippingAddress { get; set; }
         public string PaymentMethod { get; set; }
-
-        [NotMapped]
-        public string ShippingMethod { get; set; }
-
-        [NotMapped]
-        public string ShippingAddress
-        {
-            get { return string.IsNullOrWhiteSpace(_shippingAddress) ? AddressDelivery : _shippingAddress; }
-            set { _shippingAddress = value; }
-        }
-
-        [NotMapped]
-        public decimal TotalPrice { get; set; }
+        public string DeliveryMethod { get; set; }
+        public string OrderStatus { get; set; }
+        public byte[] RowVersion { get; set; }
+        public virtual Customer Customer { get; set; }
+        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
+        [NotMapped] public string AddressDelivery { get { return ShippingAddress; } set { ShippingAddress = value; } }
+        [NotMapped] public string ShippingMethod { get { return DeliveryMethod; } set { DeliveryMethod = value; } }
+        [NotMapped] public decimal TotalPrice { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -12,6 +12,7 @@ namespace BE_0302.Controllers
 {
     public class AccountController : Controller
     {
+        protected override void Dispose(bool disposing) { if (disposing) db.Dispose(); base.Dispose(disposing); }
         private MyStoreEntities db = new MyStoreEntities();
 
         public ActionResult Register()
@@ -36,7 +37,7 @@ namespace BE_0302.Controllers
                 var user = new User
                 {
                     Username = model.Username,
-                    Password = model.Password,
+                    Password = PasswordHelper.Hash(model.Password),
                     UserRole = "C"
                 };
                 db.Users.Add(user);
@@ -58,31 +59,35 @@ namespace BE_0302.Controllers
             return View(model);
         }
 
-        public ActionResult Login()
+        public ActionResult Login(string returnUrl)
         {
+            ViewBag.ReturnUrl = returnUrl;
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Login(LoginVM model)
+        public ActionResult Login(LoginVM model, string returnUrl)
         {
+            ViewBag.ReturnUrl = returnUrl;
             if (ModelState.IsValid)
             {
                 var user = db.Users.SingleOrDefault(u => u.Username == model.Username);
                 if (user != null)
                 {
                     string role = (user.UserRole ?? "").Trim();
-                    string storedPwd = (user.Password ?? "").Trim();
-                    bool passwordMatch = (storedPwd == model.Password) || PasswordHelper.Verify(model.Password, storedPwd);
+                    string storedPwd = (user.Password ?? "").TrimEnd();
+                    bool passwordMatch = PasswordHelper.Verify(model.Password, storedPwd);
 
                     if (passwordMatch && (role == "C" || role.Equals("Customer", StringComparison.OrdinalIgnoreCase)))
                     {
 
+                        if (!storedPwd.StartsWith("p1$")) { user.Password = PasswordHelper.Hash(model.Password); db.SaveChanges(); }
                         Session["Username"] = user.Username;
                         Session["UserRole"] = user.UserRole;
 
                         FormsAuthentication.SetAuthCookie(user.Username, false);
+                        if (Url.IsLocalUrl(returnUrl)) return Redirect(returnUrl);
 
                         return RedirectToAction("Index", "Home");
                     }
@@ -94,6 +99,7 @@ namespace BE_0302.Controllers
             return View(model);
         }
 
+        [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Logout()
         {
             Session.Clear();
@@ -186,9 +192,9 @@ namespace BE_0302.Controllers
             model.CustomerAddress = customer.CustomerAddress;
             model.Username = customer.Username;
 
-            string storedPwd = (user.Password ?? "").Trim();
+            string storedPwd = (user.Password ?? "").TrimEnd();
             bool currentMatch = !string.IsNullOrEmpty(model.CurrentPassword) &&
-                                ((storedPwd == model.CurrentPassword) || PasswordHelper.Verify(model.CurrentPassword, storedPwd));
+                                PasswordHelper.Verify(model.CurrentPassword, storedPwd);
 
             if (!currentMatch)
             {
@@ -196,13 +202,13 @@ namespace BE_0302.Controllers
                 return View("ProfileInfo", model);
             }
 
-            if (string.IsNullOrEmpty(model.NewPassword) || model.NewPassword != model.ConfirmPassword)
+            if (string.IsNullOrEmpty(model.NewPassword) || model.NewPassword.Length < 8 || model.NewPassword.Length > 100 || model.NewPassword != model.ConfirmPassword)
             {
                 ModelState.AddModelError("ConfirmPassword", "Mật khẩu mới và xác nhận mật khẩu không khớp.");
                 return View("ProfileInfo", model);
             }
 
-            user.Password = model.NewPassword;
+            user.Password = PasswordHelper.Hash(model.NewPassword);
             db.SaveChanges();
             TempData["SuccessMessage"] = "Đổi mật khẩu thành công!";
             return RedirectToAction("ProfileInfo");

@@ -1,4 +1,4 @@
-﻿@model BE_0302.Models.ViewModel.LoginVM
+@model BE_0302.Models.ViewModel.LoginVM
 @{
     ViewBag.Title = "Đăng nhập tài khoản";
     Layout = "~/Views/Shared/_CustomerLayout.cshtml";
@@ -17,6 +17,7 @@
         @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { role = "form" }))
         {
             @Html.AntiForgeryToken()
+        <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
             @Html.ValidationSummary(true, "", new { @class = "alert alert-danger", style = "font-size:13.5px; border-radius:8px;" })
 
             <div class="form-group" style="margin-bottom: 18px;">

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
@@ -11,6 +11,7 @@ using PayPal.Api;
 
 namespace BE_0302.Controllers
 {
+    [Authorize]
     public class PaypalController : Controller
     {
         private MyStoreEntities db = new MyStoreEntities();
@@ -35,14 +36,13 @@ namespace BE_0302.Controllers
         private Payment CreatePayment(APIContext apiContext, string redirectUrl, decimal totalVnd, List<CartItem> cartItems)
         {
 
-            decimal totalUsd = Math.Round(totalVnd / 25000m, 2);
-            if (totalUsd < 0.01m) totalUsd = 1.00m;
+
 
             var itemList = new ItemList() { items = new List<Item>() };
             foreach (var item in cartItems)
             {
-                decimal itemUsd = Math.Round(item.UnitPrice / 25000m, 2);
-                if (itemUsd < 0.01m) itemUsd = 0.50m;
+                decimal itemUsd = Math.Round(item.UnitPrice / VndPerUsd, 2);
+                if (itemUsd < 0.01m) throw new InvalidOperationException("Gia tri san pham nho hon muc thanh toan toi thieu.");
                 itemList.items.Add(new Item()
                 {
                     name = item.ProductName.Length > 60 ? item.ProductName.Substring(0, 57) + "..." : item.ProductName,
@@ -106,119 +106,81 @@ namespace BE_0302.Controllers
             return payment.Execute(apiContext, paymentExecution);
         }
 
-        public ActionResult PaymentWithPaypal(CheckoutVM model, string Cancel, string PayerID, string paymentId)
+        public ActionResult PaymentWithPaypal(string Cancel, string PayerID, string paymentId, string state)
         {
+            var model = Session["PayPalCheckout"] as CheckoutVM;
+            var cart = Session["PayPalCart"] as List<CartItem>;
+            var customer = db.Customers.SingleOrDefault(c => c.Username == User.Identity.Name);
+            if (customer == null) return RedirectToAction("Login", "Account");
+            if (model == null || cart == null || !cart.Any() || model.CustomerID != customer.CustomerID)
+                return RedirectToAction("Checkout", "Order");
+            if (!IsConfigured()) return Failure("PayPal hiện chưa sẵn sàng. Vui lòng chọn thanh toán khi nhận hàng.");
             try
             {
-                if (!string.IsNullOrEmpty(Cancel) && Cancel.Equals("true", StringComparison.OrdinalIgnoreCase))
-                {
-                    return View("FailureView");
+                if (!string.IsNullOrEmpty(Cancel)) {
+                    if (state != Session["PayPalState"] as string) return new HttpStatusCodeResult(400);
+                    ClearPending();
+                    return Failure("Bạn đã hủy thanh toán. Các sản phẩm vẫn còn trong giỏ hàng.");
                 }
-
-                var cartObj = Session["Cart"] as Cart;
-                var cart = cartObj != null ? cartObj.Items.ToList() : Session["Cart"] as List<CartItem>;
-                if (cart == null || !cart.Any())
-                {
-                    return RedirectToAction("Index", "Home");
-                }
-
-                var user = db.Users.SingleOrDefault(u => u.Username == User.Identity.Name);
-                var customer = user != null ? db.Customers.FirstOrDefault(c => c.Username == user.Username) : null;
-                if (customer == null)
-                {
-                    return RedirectToAction("Login", "Account");
-                }
-
-                if (!string.IsNullOrEmpty(PayerID) && !string.IsNullOrEmpty(paymentId))
-                {
-                    try
-                    {
-                        var apiContext = GetAPIContext();
-                        var executedPayment = ExecutePayment(apiContext, PayerID, paymentId);
-                        if (executedPayment.state.ToLower() != "approved")
-                        {
-                            return View("FailureView");
-                        }
-                    }
-                    catch
-                    {
-
-                    }
-
-                    var savedOrder = CreateDbOrder(customer, cart, model, "Đã thanh toán (PayPal)");
-                    Session["Cart"] = null;
-                    return RedirectToAction("OrderSuccess", "Order", new { id = savedOrder.OrderID });
-                }
-
-                try
-                {
-                    var apiContext = GetAPIContext();
-                    string baseURI = Request.Url.Scheme + "://" + Request.Url.Authority + "/Paypal/PaymentWithPaypal?";
-                    var createdPayment = CreatePayment(apiContext, baseURI, cart.Sum(i => i.TotalPrice), cart);
-
-                    var links = createdPayment.links.GetEnumerator();
-                    string paypalRedirectUrl = null;
-                    while (links.MoveNext())
-                    {
-                        var lnk = links.Current;
-                        if (lnk.rel.ToLower().Trim().Equals("approval_url"))
-                        {
-                            paypalRedirectUrl = lnk.href;
-                        }
-                    }
-
-                    if (!string.IsNullOrEmpty(paypalRedirectUrl))
-                    {
-                        return Redirect(paypalRedirectUrl);
-                    }
-                }
-                catch
-                {
-
-                    var order = CreateDbOrder(customer, cart, model, "Thanh toán PayPal (Sandbox Demo)");
-                    Session["Cart"] = null;
+                if (!string.IsNullOrEmpty(paymentId) || !string.IsNullOrEmpty(PayerID)) {
+                    if (paymentId != Session["PayPalPaymentId"] as string || string.IsNullOrWhiteSpace(PayerID) || state != Session["PayPalState"] as string)
+                        return new HttpStatusCodeResult(400);
+                    var api = GetAPIContext();
+                    var payment = Payment.Get(api, paymentId);
+                    if (payment.state != "approved") payment = ExecutePayment(api, PayerID, paymentId);
+                    decimal total;
+                    var expected = (decimal)Session["PayPalExpectedUsd"];
+                    bool verified = payment.id == paymentId && payment.state == "approved" &&
+                        payment.transactions != null && payment.transactions.Count == 1 &&
+                        payment.transactions[0].amount.currency == "USD" &&
+                        decimal.TryParse(payment.transactions[0].amount.total, NumberStyles.Number, CultureInfo.InvariantCulture, out total) && total == expected &&
+                        payment.transactions[0].related_resources != null &&
+                        payment.transactions[0].related_resources.Any(x => x.sale != null && x.sale.state == "completed");
+                    if (!verified) return Failure("PayPal chưa xác nhận thanh toán hoàn tất. Đơn hàng chưa được tạo.");
+                    var order = new BE_0302.Models.Order {
+                        CustomerID = customer.CustomerID, OrderDate = DateTime.UtcNow.AddHours(7),
+                        TotalAmount = cart.Sum(i => i.TotalPrice), PaymentStatus = "Paid", OrderStatus = "Processing",
+                        PaymentMethod = "Paypal", DeliveryMethod = model.ShippingMethod, ShippingAddress = model.ShippingAddress,
+                        OrderDetails = cart.Select(i => new OrderDetail { ProductID = i.ProductID, Quantity = i.Quantity, UnitPrice = i.UnitPrice }).ToList() };
+                    db.Orders.Add(order); db.SaveChanges();
+                    new CartService(Session).GetCart().RemovePurchased(cart); ClearPending();
                     return RedirectToAction("OrderSuccess", "Order", new { id = order.OrderID });
                 }
-
-                var fallbackOrder = CreateDbOrder(customer, cart, model, "Thanh toán PayPal");
-                Session["Cart"] = null;
-                return RedirectToAction("OrderSuccess", "Order", new { id = fallbackOrder.OrderID });
+                var token = Guid.NewGuid().ToString("N");
+                Session["PayPalState"] = token;
+                string callback = Url.Action("PaymentWithPaypal", "Paypal", new { state = token }, Request.Url.Scheme);
+                var created = CreatePayment(GetAPIContext(), callback, cart.Sum(i => i.TotalPrice), cart);
+                var approval = created.links.FirstOrDefault(l => l.rel == "approval_url");
+                if (approval == null) return Failure("Không thể mở trang thanh toán PayPal. Vui lòng thử lại.");
+                Session["PayPalPaymentId"] = created.id;
+                Session["PayPalExpectedUsd"] = decimal.Parse(created.transactions[0].amount.total, CultureInfo.InvariantCulture);
+                return Redirect(approval.href);
             }
-            catch (Exception)
+            catch (Exception error)
             {
-                return View("FailureView");
+                System.Diagnostics.Trace.TraceWarning("PayPal checkout failed: {0}", error.GetType().Name);
+                return Failure("Không thể xác nhận thanh toán PayPal. Giỏ hàng được giữ lại để bạn kiểm tra và thử lại.");
             }
         }
-
-        private BE_0302.Models.Order CreateDbOrder(Customer customer, List<CartItem> cart, CheckoutVM model, string paymentStatus)
-        {
-            var order = new BE_0302.Models.Order
-            {
-                CustomerID = customer.CustomerID,
-                OrderDate = DateTime.Now,
-                TotalAmount = cart.Sum(i => i.TotalPrice),
-                PaymentStatus = paymentStatus,
-                PaymentMethod = "Paypal",
-                ShippingMethod = (model != null && !string.IsNullOrEmpty(model.ShippingMethod)) ? model.ShippingMethod : "Giao hàng nhanh",
-                ShippingAddress = (model != null && !string.IsNullOrEmpty(model.ShippingAddress)) ? model.ShippingAddress : customer.CustomerAddress,
-                AddressDelivery = (model != null && !string.IsNullOrEmpty(model.ShippingAddress)) ? model.ShippingAddress : customer.CustomerAddress,
-                OrderDetails = cart.Select(item => new OrderDetail
-                {
-                    ProductID = item.ProductID,
-                    Quantity = item.Quantity,
-                    UnitPrice = item.UnitPrice,
-                    TotalPrice = item.TotalPrice
-                }).ToList()
-            };
-
-            db.Orders.Add(order);
-            db.SaveChanges();
-            return order;
+        public static decimal VndPerUsd {
+            get {
+                decimal rate;
+                return decimal.TryParse(ConfigurationManager.AppSettings["PayPalVndPerUsd"], NumberStyles.Number,
+                    CultureInfo.InvariantCulture, out rate) && rate > 0 ? rate : 0;
+            }
         }
-
-        public ActionResult FailureView()
+        public static bool IsConfigured()
         {
-            return View();
+            var id = ConfigurationManager.AppSettings["PayPalClientId"];
+            var secret = ConfigurationManager.AppSettings["PayPalClientSecret"];
+            return VndPerUsd > 0 && !string.IsNullOrWhiteSpace(id) && !string.IsNullOrWhiteSpace(secret) && !id.StartsWith("YOUR_") && !secret.StartsWith("YOUR_");
         }
+        private void ClearPending()
+        {
+            foreach (string key in new[] { "PayPalCheckout", "PayPalCart", "PayPalState", "PayPalPaymentId", "PayPalExpectedUsd" }) Session.Remove(key);
+        }
+        private ActionResult Failure(string message) { ViewBag.Message = message; return View("FailureView"); }
+        public ActionResult FailureView() { return Failure("Thanh toán chưa hoàn tất. Vui lòng kiểm tra và thử lại."); }
+        protected override void Dispose(bool disposing) { if (disposing) db.Dispose(); base.Dispose(disposing); }
     }
 }

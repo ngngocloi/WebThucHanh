@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&subset=vietnamese&display=swap" rel="stylesheet" />
     @Scripts.Render("~/bundles/modernizr")
+    <link href="@Url.Content("~/Content/Orders.css")" rel="stylesheet" />
 </head>
 <body>
     <nav class="navbar navbar-inverse navbar-fixed-top" aria-label="Quản trị">
@@ -20,7 +21,7 @@
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#admin-menu" aria-label="Mở menu" aria-expanded="false">
                     <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("My Store Admin", "Index", "AdminHome", new { area = "Admin" }, new { @class = "navbar-brand" })
+                @Html.ActionLink("FASTOR Admin", "Index", "AdminHome", new { area = "Admin" }, new { @class = "navbar-brand" })
             </div>
             <div id="admin-menu" class="navbar-collapse collapse">
                 @if (Session["AdminUsername"] != null)

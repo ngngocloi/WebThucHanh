@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -30,6 +30,7 @@ namespace BE_0302.Models.ViewModel
         public string ShippingMethod { get; set; }
 
         [Required(ErrorMessage = "Vui lòng nhập địa chỉ giao hàng")]
+        [StringLength(500)]
         [Display(Name = "Địa chỉ giao hàng")]
         public string ShippingAddress { get; set; }
 

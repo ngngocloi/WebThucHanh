@@ -1,0 +1,5 @@
+@model BE_0302.Models.Product
+<article class="purchase-card small-product-card"><a href="@Url.Action("ProductDetails", "Home", new { id = Model.ProductID })"><img src="@Url.Content(Model.ImageUrl)" alt="@Model.ProductName" onerror="this.onerror=null;this.src='@Url.Content(Model.FallbackImageUrl)';" /></a>
+<h3><a href="@Url.Action("ProductDetails", "Home", new { id = Model.ProductID })">@Model.ProductName</a></h3><strong>@Model.ProductPrice.ToString("N0") đ</strong>
+@using (Html.BeginForm("AddToCart", "Cart", FormMethod.Post)) { @Html.AntiForgeryToken()<input type="hidden" name="id" value="@Model.ProductID" /><input type="hidden" name="quantity" value="1" /><button type="submit" class="btn btn-primary btn-block">Thêm vào giỏ</button> }
+</article>

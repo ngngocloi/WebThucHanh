@@ -8,9 +8,9 @@
         <div class="col-md-4 form-group"><label for="Keyword">Từ khóa</label>
             @Html.TextBoxFor(m => m.Keyword, new { @class = "form-control", placeholder = "Tên, mô tả hoặc danh mục" })</div>
         <div class="col-md-2 form-group"><label for="MinPrice">Giá tối thiểu</label>
-            @Html.TextBoxFor(m => m.MinPrice, new { @class = "form-control", type = "number", min = "0", step = "0.01" })</div>
+            @Html.TextBox("MinPrice", Model.MinPrice.HasValue ? Model.MinPrice.Value.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) : "", new { @class = "form-control", type = "number", min = "0", step = "0.01" })</div>
         <div class="col-md-2 form-group"><label for="MaxPrice">Giá tối đa</label>
-            @Html.TextBoxFor(m => m.MaxPrice, new { @class = "form-control", type = "number", min = "0", step = "0.01" })</div>
+            @Html.TextBox("MaxPrice", Model.MaxPrice.HasValue ? Model.MaxPrice.Value.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) : "", new { @class = "form-control", type = "number", min = "0", step = "0.01" })</div>
         <div class="col-md-4 form-group"><label for="SortOrder">Sắp xếp</label>
             @Html.DropDownListFor(m => m.SortOrder, new SelectList(new[] {
                 new { Value = "name_asc", Text = "Tên tăng dần" }, new { Value = "name_desc", Text = "Tên giảm dần" },

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -11,6 +11,7 @@ namespace BE_0302.Controllers
 {
     public class CartController : Controller
     {
+        protected override void Dispose(bool disposing) { if (disposing) db.Dispose(); base.Dispose(disposing); }
         private MyStoreEntities db = new MyStoreEntities();
 
         private CartService GetCartService()
@@ -20,17 +21,10 @@ namespace BE_0302.Controllers
 
         private void PopulateSimilarProducts(Cart cart, int? page)
         {
-            var products = db.Products.ToList();
-            var similarProducts = new List<Product>();
-
-            if (cart.Items != null && cart.Items.Any())
-            {
-                similarProducts = products.Where(p => p.Category != null
-                    && cart.Items.Any(ci => ci.Category == p.Category.CategoryName)
-                    && !cart.Items.Any(ci => ci.ProductID == p.ProductID)).ToList();
-            }
-
-            int pageNumber = page ?? 1;
+            var cartIds = cart.Items.Select(i => i.ProductID).Distinct().ToList();
+            var categoryIds = db.Products.Where(p => cartIds.Contains(p.ProductID)).Select(p => p.CategoryID).Distinct();
+            var similarProducts = db.Products.Where(p => categoryIds.Contains(p.CategoryID) && !cartIds.Contains(p.ProductID));
+            int pageNumber = BE_0302.Helpers.PageHelper.Clamp(page, similarProducts.Count(), cart.PageSize);
             int pageSize = cart.PageSize;
             cart.SimilarProducts = similarProducts.OrderBy(p => p.ProductID).ToPagedList(pageNumber, pageSize);
         }
@@ -42,13 +36,17 @@ namespace BE_0302.Controllers
             return View(cart);
         }
 
-        public ActionResult Index2(int? page)
+        public ActionResult Index2(int? page) { return RedirectToAction("Index", new { page }); }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Checkout(int[] selectedIds)
         {
-            var cart = GetCartService().GetCart();
-            PopulateSimilarProducts(cart, page);
-            return View(cart);
+            var cart = GetCartService().GetCart(); cart.SelectItems(selectedIds);
+            if (!cart.Items.Any(i => i.Selected)) { TempData["Error"] = "Vui lòng chọn sản phẩm muốn mua."; return RedirectToAction("Index"); }
+            return RedirectToAction("Checkout", "Order");
         }
 
+        [HttpPost, ValidateAntiForgeryToken]
         public ActionResult AddToCart(int id, int quantity = 1)
         {
             var product = db.Products.Find(id);
@@ -56,6 +54,10 @@ namespace BE_0302.Controllers
             {
                 var cartService = GetCartService();
                 string categoryName = product.Category != null ? product.Category.CategoryName : "Khác";
+                if (quantity < 1 || quantity > 99 || cartService.GetCart().Items.Any(i => i.ProductID == id && i.Quantity > 99 - quantity)) {
+                    TempData["Error"] = "Số lượng mỗi sản phẩm phải từ 1 đến 99.";
+                    return RedirectToAction("Index");
+                }
                 cartService.GetCart().AddItem(
                     product.ProductID,
                     product.ProductImage,
@@ -67,11 +69,13 @@ namespace BE_0302.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost, ValidateAntiForgeryToken]
         public ActionResult AddItem(int id, int quantity = 1)
         {
             return AddToCart(id, quantity);
         }
 
+        [HttpPost, ValidateAntiForgeryToken]
         public ActionResult RemoveFromCart(int id)
         {
             var cartService = GetCartService();
@@ -79,21 +83,24 @@ namespace BE_0302.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost, ValidateAntiForgeryToken]
         public ActionResult RemoveItem(int id)
         {
             return RemoveFromCart(id);
         }
 
+        [HttpPost, ValidateAntiForgeryToken]
         public ActionResult ClearCart()
         {
             GetCartService().ClearCart();
             return RedirectToAction("Index");
         }
 
-        [HttpPost]
+        [HttpPost, ValidateAntiForgeryToken]
         public ActionResult UpdateQuantity(int id, int quantity)
         {
             var cartService = GetCartService();
+            if (quantity < 1 || quantity > 99) { TempData["Error"] = "Số lượng phải từ 1 đến 99."; return RedirectToAction("Index"); }
             cartService.GetCart().UpdateQuantity(id, quantity);
             return RedirectToAction("Index");
         }

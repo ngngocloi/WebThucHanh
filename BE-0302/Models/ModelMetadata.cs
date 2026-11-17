@@ -144,20 +144,9 @@ namespace BE_0302.Models
         [Display(Name = "Mô tả")]
         public string ProductDescription { get; set; }
 
-        [Range(typeof(decimal), "0", "1000000000.00", ErrorMessage = "Đơn giá phải từ 0 đến 1.000.000.000,00")]
+        [BE_0302.Helpers.MoneyRange(1000000000)]
         [Display(Name = "Đơn giá")]
         public decimal ProductPrice { get; set; }
     }
 
-    public partial class OrderDetail
-    {
-        private decimal? _totalPrice;
-
-        [NotMapped]
-        public decimal? TotalPrice
-        {
-            get { return _totalPrice ?? (Quantity * UnitPrice); }
-            set { _totalPrice = value; }
-        }
-    }
 }

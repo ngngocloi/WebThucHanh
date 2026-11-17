@@ -124,11 +124,11 @@ namespace BE_0302.Areas.Admin.Controllers
                     if (!valid) throw new ArgumentException();
                 }
                 file.InputStream.Position = 0;
-                string directory = Server.MapPath("~/Content/images/products");
+                string directory = Server.MapPath("~/Content/images/products/");
                 Directory.CreateDirectory(directory);
                 string name = Guid.NewGuid().ToString("N") + extension;
                 file.SaveAs(Path.Combine(directory, name));
-                product.ProductImage = "~/Content/images/products" + name;
+                product.ProductImage = "~/Content/images/products/" + name;
                 return true;
             }
             catch (Exception error) when (error is ArgumentException || error is IOException

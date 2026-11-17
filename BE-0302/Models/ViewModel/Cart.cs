@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -22,6 +22,7 @@ namespace BE_0302.Models.ViewModel
         public void AddItem(int productId, string productImage, string productName,
             decimal unitPrice, int quantity, string category)
         {
+            if (quantity < 1 || quantity > 99) throw new ArgumentOutOfRangeException("quantity");
             var existingItem = items.FirstOrDefault(i => i.ProductID == productId);
             if (existingItem == null)
             {
@@ -37,6 +38,7 @@ namespace BE_0302.Models.ViewModel
             }
             else
             {
+                if (existingItem.Quantity > 99 - quantity) throw new ArgumentOutOfRangeException("quantity");
                 existingItem.Quantity += quantity;
             }
         }
@@ -58,10 +60,25 @@ namespace BE_0302.Models.ViewModel
 
         public void UpdateQuantity(int productId, int quantity)
         {
+            if (quantity < 1 || quantity > 99) throw new ArgumentOutOfRangeException("quantity");
             var item = items.FirstOrDefault(i => i.ProductID == productId);
             if (item != null)
             {
                 item.Quantity = quantity;
+            }
+        }
+        public void SelectItems(int[] ids)
+        {
+            var selected = new HashSet<int>(ids ?? new int[0]);
+            foreach (var item in items) item.Selected = selected.Contains(item.ProductID);
+        }
+        public void RemovePurchased(IEnumerable<CartItem> purchased)
+        {
+            foreach (var paid in purchased.ToList()) {
+                var item = items.FirstOrDefault(i => i.ProductID == paid.ProductID);
+                if (item == null) continue;
+                item.Quantity -= paid.Quantity;
+                if (item.Quantity <= 0) items.Remove(item);
             }
         }
     }

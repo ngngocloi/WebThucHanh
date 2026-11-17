@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -31,12 +31,12 @@ namespace BE_0302.Models.ViewModel
 
         [Required(ErrorMessage = "Vui lòng nhập số điện thoại")]
         [Display(Name = "Số điện thoại")]
-        [DataType(DataType.PhoneNumber)]
+        [StringLength(15), RegularExpression(@"[0-9+(). -]{8,15}", ErrorMessage = "Số điện thoại không hợp lệ.")]
         public string CustomerPhone { get; set; }
 
         [Required(ErrorMessage = "Vui lòng nhập Email")]
         [Display(Name = "Email")]
-        [DataType(DataType.EmailAddress)]
+        [EmailAddress(ErrorMessage = "Email không hợp lệ.")]
         public string CustomerEmail { get; set; }
 
         [Required(ErrorMessage = "Vui lòng nhập địa chỉ")]

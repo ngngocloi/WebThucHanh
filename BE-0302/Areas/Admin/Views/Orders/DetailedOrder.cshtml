@@ -1,0 +1,15 @@
+@model BE_0302.Models.Order
+@using BE_0302.Helpers
+@{ ViewBag.Title = "Chi tiết đơn hàng #" + Model.OrderID; }
+<h1 class="page-title">CHI TIẾT ĐƠN HÀNG <span class="text-muted">#@Model.OrderID</span></h1>
+<div class="order-detail-grid"><section class="order-summary"><h2>THÔNG TIN ĐƠN HÀNG</h2><dl>
+    <dt>Ngày đặt hàng</dt><dd>@Model.OrderDate.ToString("dd/MM/yyyy")</dd>
+    <dt>Tên khách hàng</dt><dd><a href="@Url.Action("Details", "Customers", new { id = Model.CustomerID })">@Model.Customer.CustomerName</a></dd>
+    <dt>Tổng giá trị</dt><dd class="money">@Model.TotalAmount.ToString("N0") đ</dd>
+    <dt>Phương thức thanh toán</dt><dd>@Model.PaymentMethod</dd>
+    <dt>Trạng thái thanh toán</dt><dd>@OrderWorkflow.PaymentLabel(Model.PaymentStatus)</dd>
+    <dt>Trạng thái đơn hàng</dt><dd>@OrderWorkflow.Label(Model.OrderStatus)</dd>
+    <dt>Phương thức giao hàng</dt><dd>@Model.DeliveryMethod</dd>
+    <dt>Địa chỉ giao hàng</dt><dd>@Model.ShippingAddress</dd>
+</dl></section><section>@Html.Partial("~/Views/Shared/_OrderLines.cshtml", Model.OrderDetails)</section></div>
+<div class="form-actions"><a class="btn btn-primary" href="@Url.Action("UpdateStatus", new { id = Model.OrderID })">Cập nhật trạng thái</a><a class="btn btn-default" href="@Url.Action("Index")">Quay lại danh sách</a></div>

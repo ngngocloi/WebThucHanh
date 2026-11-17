@@ -1,96 +1,42 @@
-﻿@model IEnumerable<BE_0302.Models.Order>
-@{
-    ViewBag.Title = "Đơn hàng của tôi";
-    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
-    string currentStatus = ViewBag.CurrentStatus as string ?? "Tất cả đơn";
-    string[] tabs = new[] { "Tất cả đơn", "Chờ thanh toán", "Đang xử lý", "Đang vận chuyển", "Đã giao", "Đã hủy" };
+@model BE_0302.Models.ViewModel.OrderHistoryVM
+@using BE_0302.Helpers
+@{ ViewBag.Title = "Đơn hàng của tôi"; Layout = "~/Views/Shared/_CustomerLayout.cshtml"; }
+<div class="orders-page"><h1>Đơn hàng của tôi</h1>
+<nav class="order-tabs" aria-label="Trạng thái đơn hàng">
+    <a class="@(Model.Status == "All" ? "active" : "")" href="@Url.Action("MyOrder", new { searchTerm = Model.SearchTerm })">Tất cả đơn</a>
+    @foreach (var state in OrderWorkflow.States) { <a class="@(Model.Status == state ? "active" : "")" href="@Url.Action("MyOrder", new { status = state, searchTerm = Model.SearchTerm })">@OrderWorkflow.Label(state)</a> }
+</nav>
+@using (Html.BeginForm("MyOrder", "Order", FormMethod.Get, new { @class = "order-search" })) {
+    <input type="hidden" name="status" value="@Model.Status" /><label class="sr-only" for="order-keyword">Tìm đơn hàng</label>
+    <input id="order-keyword" name="searchTerm" value="@Model.SearchTerm" maxlength="200" placeholder="Tìm đơn hàng theo mã đơn hàng hoặc tên sản phẩm" /><button type="submit">Tìm đơn hàng</button>
 }
-
-<div class="container" style="margin-top:15px; margin-bottom:40px;">
-    <h2 style="font-weight:800; color:#0f172a; margin-bottom:18px;">
-        <i class="fas fa-history text-primary"></i> ĐƠN HÀNG CỦA TÔI
-    </h2>
-
-    <ul class="nav nav-tabs" style="margin-bottom:20px; font-weight:600;">
-        @foreach (var tab in tabs)
-        {
-            <li class="@(currentStatus == tab ? "active" : "")">
-                <a href="@Url.Action("MyOrder", "Order", new { status = tab, searchTerm = ViewBag.SearchTerm })">@tab</a>
-            </li>
+@if (!Model.HasAnyOrders) {
+    <div class="orders-empty"><h2>BẠN CHƯA CÓ ĐƠN HÀNG NÀO. HÃY ĐẶT ĐƠN NGAY.</h2><a class="btn btn-primary" href="@Url.Action("Index", "Home")">Về trang HOME</a></div>
+} else if (Model.Groups.Count == 0) {
+    <div class="orders-empty"><h2>Không tìm thấy đơn hàng phù hợp.</h2><a href="@Url.Action("MyOrder")">Xem tất cả đơn hàng</a></div>
+} else {
+    foreach (var group in Model.Groups) {
+        <section class="order-group"><div class="order-count"><h2>@OrderWorkflow.Label(group.Status)</h2><span>Hiển thị @group.Orders.Count / @group.TotalCount đơn</span></div>
+        @foreach (var order in group.Orders) {
+            <article class="purchase-card" data-order-id="@order.OrderID"><header><span class="order-state state-@group.Status">@OrderWorkflow.Label(group.Status)</span><span>#@order.OrderID · @order.OrderDate.ToString("dd/MM/yyyy")</span></header>
+            @foreach (var line in order.OrderDetails.OrderBy(d => d.ID)) {
+                <div class="purchase-line">
+                @if (line.Product != null) {
+                    <a href="@Url.Action("ProductDetails", "Home", new { id = line.ProductID })"><img src="@Url.Content(line.Product.ImageUrl)" alt="@line.Product.ProductName" onerror="this.onerror=null;this.src='@Url.Content(line.Product.FallbackImageUrl)';" /></a>
+                    <div class="purchase-info"><a class="purchase-name" href="@Url.Action("ProductDetails", "Home", new { id = line.ProductID })">@line.Product.ProductName</a><p>Số lượng: @line.Quantity · Đơn giá: @line.UnitPrice.ToString("N0") đ</p><div class="purchase-actions">
+                    @using (Html.BeginForm("Reorder", "Order", new { id = order.OrderID, productId = line.ProductID }, FormMethod.Post, new { @class = "inline-form" })) { @Html.AntiForgeryToken()<button type="submit" class="btn btn-default btn-sm">Mua lại</button> }
+                    <a class="btn btn-default btn-sm" href="@Url.Action("ProductDetails", "Home", new { id = line.ProductID })">Xem chi tiết</a></div></div>
+                } else { <div class="purchase-info">Sản phẩm không còn được bán</div> }
+                <strong class="purchase-price">@line.TotalPrice.ToString("N0") đ</strong></div>
+            }
+            <footer><span>@OrderWorkflow.PaymentLabel(order.PaymentStatus)</span><div>Tổng tiền: <strong>@order.TotalAmount.ToString("N0") đ</strong><div class="purchase-actions">
+                @using (Html.BeginForm("Reorder", "Order", new { id = order.OrderID }, FormMethod.Post, new { @class = "inline-form" })) { @Html.AntiForgeryToken()<button type="submit" class="btn btn-primary">Mua lại đơn này</button> }
+                <a class="btn btn-default" href="@Url.Action("OrderSuccess", new { id = order.OrderID })">Thông tin đơn hàng</a>
+            </div></div></footer></article>
         }
-    </ul>
-
-    @using (Html.BeginForm("MyOrder", "Order", FormMethod.Get, new { @class = "form-inline", style = "margin-bottom:24px;" }))
-    {
-        <input type="hidden" name="status" value="@currentStatus" />
-        <div class="input-group" style="width:100%; max-width:650px;">
-            <input type="text" name="searchTerm" value="@ViewBag.SearchTerm" class="form-control" placeholder="Tìm đơn hàng theo Mã đơn (#123) hoặc tên sản phẩm..." style="height:42px; font-size:14px;" />
-            <span class="input-group-btn">
-                <button type="submit" class="btn btn-primary" style="height:42px; font-weight:700; padding:0 22px;">
-                    <i class="fas fa-search"></i> Tìm đơn
-                </button>
-            </span>
-        </div>
+        @if (group.TotalCount > 2 && !group.Expanded) { <a class="more-orders" href="@Url.Action("MyOrder", new { status = Model.Status, searchTerm = Model.SearchTerm, more = group.Status })">Xem thêm · tối đa 50 đơn gần nhất</a> }
+        @if (group.Expanded) { <div class="order-count"><span>Đang hiển thị tối đa 50 đơn gần nhất.</span><a href="@Url.Action("MyOrder", new { status = Model.Status, searchTerm = Model.SearchTerm })">Thu gọn</a></div> }
+        </section>
     }
-
-    @if (Model == null || !Model.Any())
-    {
-        <div class="alert alert-info" style="border-radius:10px; padding:20px;">
-            <i class="fas fa-info-circle"></i> Chưa tìm thấy đơn hàng nào phù hợp với trạng thái hoặc từ khóa đã chọn.
-        </div>
-    }
-    else
-    {
-        foreach (var order in Model)
-        {
-            <div class="panel panel-default" style="border-radius:10px; overflow:hidden; box-shadow:0 2px 8px rgba(15,23,42,0.05); margin-bottom:20px;">
-                <div class="panel-heading" style="background:#f8fafc; font-weight:600; padding:12px 18px;">
-                    <span class="text-primary"><i class="fas fa-receipt"></i> Mã đơn: <strong>#@order.OrderID</strong></span>
-                    <span style="margin: 0 10px; color:#cbd5e1;">|</span>
-                    <span style="color:#64748b;"><i class="far fa-calendar-alt"></i> Ngày đặt: @order.OrderDate.ToString("dd/MM/yyyy")</span>
-                    <span style="margin: 0 10px; color:#cbd5e1;">|</span>
-                    <span>Trạng thái: <span class="label label-success" style="font-size:12px;">@order.PaymentStatus</span></span>
-                </div>
-                <div class="panel-body" style="padding:18px;">
-                    <table class="table table-hover" style="margin-bottom:12px; vertical-align:middle;">
-                        <tbody>
-                            @foreach (var detail in order.OrderDetails)
-                            {
-                                <tr>
-                                    <td style="width:70px;">
-                                        <img src="@Url.Content(detail.Product != null ? detail.Product.ImageUrl : "~/Content/images/default-product.svg")"
-                                             alt=""
-                                             style="width:55px; height:55px; object-fit:contain; border-radius:6px; background:#f8fafc; border:1px solid #e2e8f0; padding:3px;"
-                                             onerror="this.onerror=null;this.src='@Url.Content("~/Content/images/default-product.svg")';" />
-                                    </td>
-                                    <td>
-                                        <strong style="color:#0f172a; font-size:14px;">@(detail.Product != null ? detail.Product.ProductName : "Sản phẩm #" + detail.ProductID)</strong>
-                                        <div style="color:#64748b; font-size:12.5px; margin-top:2px;">Số lượng: <strong>x@(detail.Quantity)</strong></div>
-                                    </td>
-                                    <td class="text-right" style="font-weight:700; color:#475569;">@detail.UnitPrice.ToString("N0") đ</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                    <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px dashed #e2e8f0; padding-top:14px; flex-wrap:wrap; gap:10px;">
-                        <div>
-                            <span style="color:#64748b; font-size:13.5px;">Tổng giá trị thanh toán: </span>
-                            <span style="color:#dc2626; font-size:18px; font-weight:800;">@order.TotalAmount.ToString("N0") đ</span>
-                        </div>
-                        <div style="display:flex; gap:8px;">
-                            @if (order.OrderDetails != null && order.OrderDetails.Any())
-                            {
-                                <a href="@Url.Action("AddToCart", "Cart", new { id = order.OrderDetails.First().ProductID, quantity = 1 })" class="btn btn-default btn-sm" style="font-weight:600;">
-                                    <i class="fas fa-redo"></i> Mua lại
-                                </a>
-                            }
-                            <a href="@Url.Action("OrderSuccess", "Order", new { id = order.OrderID })" class="btn btn-primary btn-sm" style="font-weight:600;">
-                                <i class="fas fa-eye"></i> Xem biên nhận
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
-    }
+}
 </div>

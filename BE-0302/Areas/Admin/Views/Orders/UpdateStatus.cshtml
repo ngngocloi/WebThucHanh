@@ -1,0 +1,14 @@
+@model BE_0302.Models.ViewModel.OrderStatusVM
+@using BE_0302.Helpers
+@{ ViewBag.Title = "Cập nhật trạng thái"; }
+<h1 class="page-title bg-success">CẬP NHẬT TRẠNG THÁI ĐƠN #@Model.OrderID</h1>
+<div class="status-editor"><p>Khách hàng: <strong>@Model.Order.Customer.CustomerName</strong></p><p>Trạng thái hiện tại: <strong>@OrderWorkflow.Label(Model.Order.OrderStatus)</strong></p>
+@using (Html.BeginForm("UpdateStatus", "Orders", FormMethod.Post)) {
+    @Html.AntiForgeryToken() @Html.HiddenFor(m => m.OrderID) @Html.HiddenFor(m => m.Version)
+    @Html.ValidationSummary(false, "", new { @class = "text-danger", role = "alert" })
+    <div class="form-group">@Html.LabelFor(m => m.OrderStatus)@Html.DropDownListFor(m => m.OrderStatus, OrderWorkflow.StateOptions(Model.Order.OrderStatus), new { @class = "form-control" })</div>
+    <div class="form-group">@Html.LabelFor(m => m.PaymentStatus)@Html.DropDownListFor(m => m.PaymentStatus, OrderWorkflow.PaymentOptions(), new { @class = "form-control" })</div>
+    <p class="text-muted">Đơn đã giao hoặc đã hủy giữ nguyên trạng thái đơn hàng.</p>
+    <button type="submit" class="btn btn-primary">Lưu cập nhật</button><a class="btn btn-default" href="@Url.Action("DetailedOrder", new { id = Model.OrderID })">Quay lại chi tiết</a>
+}
+</div>

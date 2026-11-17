@@ -12,6 +12,8 @@ namespace BE_0302
     {
         protected void Application_Start()
         {
+            ModelBinders.Binders.Add(typeof(decimal), new Helpers.DecimalModelBinder());
+            ModelBinders.Binders.Add(typeof(decimal?), new Helpers.DecimalModelBinder());
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);

@@ -1,0 +1,11 @@
+@model IEnumerable<BE_0302.Models.OrderDetail>
+<div class="table-responsive"><table class="table order-lines"><thead><tr><th>Sản phẩm</th><th>Số lượng</th><th>Đơn giá</th><th>Thành tiền</th></tr></thead><tbody>
+@foreach (var line in Model.OrderBy(d => d.ID)) {
+    <tr><td><div class="order-product">
+    @if (line.Product != null) {
+        <a href="@Url.Action("ProductDetails", "Home", new { area = "", id = line.ProductID })"><img src="@Url.Content(line.Product.ImageUrl)" alt="@line.Product.ProductName" onerror="this.onerror=null;this.src='@Url.Content(line.Product.FallbackImageUrl)';" /></a>
+        <a href="@Url.Action("ProductDetails", "Home", new { area = "", id = line.ProductID })">@line.Product.ProductName</a>
+    } else { <span>Sản phẩm không còn được bán</span> }
+    </div></td><td>@line.Quantity</td><td class="money">@line.UnitPrice.ToString("N0") đ</td><td class="money">@line.TotalPrice.ToString("N0") đ</td></tr>
+}
+</tbody></table></div>

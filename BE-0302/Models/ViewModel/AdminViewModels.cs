@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using PagedList;
 
@@ -39,6 +39,9 @@ namespace BE_0302.Models.ViewModel
     }
     public class OrderSearchVM
     {
+        public string PaymentStatus { get; set; }
+        public System.DateTime? OrderDate { get; set; }
+        public string SortOrder { get; set; }
         public string Keyword { get; set; }
         public int? CustomerID { get; set; }
         public string CustomerName { get; set; }

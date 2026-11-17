@@ -1,4 +1,4 @@
-﻿@model BE_0302.Models.ViewModel.PersonalMenuVM
+@model BE_0302.Models.ViewModel.PersonalMenuVM
 
 <ul class="nav navbar-nav navbar-right">
     <li>
@@ -25,7 +25,9 @@
                 {
                     <a href="@Url.Action("ProfileInfo", "Account")">Thông tin tài khoản</a>
                     <a href="@Url.Action("OrderHistory", "Order")">Lịch sử mua hàng</a>
-                    <a href="@Url.Action("Logout", "Account")">Đăng xuất</a>
+                    using (Html.BeginForm("Logout", "Account", new { area = "" }, FormMethod.Post, new { @class = "logout-form" })) {
+                                        @Html.AntiForgeryToken()<button type="submit" class="btn btn-link nav-dropdown-item">Đăng xuất</button>
+                                    }
                 }
                 else
                 {

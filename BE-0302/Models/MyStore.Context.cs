@@ -1,4 +1,4 @@
-﻿namespace BE_0302.Models
+namespace BE_0302.Models
 {
     using System;
     using System.Data.Entity;
@@ -10,6 +10,8 @@
             : base("name=MyStoreEntities")
         {
         }
+
+        public MyStoreEntities(string connectionString) : base(connectionString) { }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
